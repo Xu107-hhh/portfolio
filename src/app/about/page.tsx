@@ -59,7 +59,7 @@ export default function AboutPage() {
             ))}
 
             <Reveal delay={0.1}>
-              <dl className="mt-8 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-4">
+              <dl className="mt-8 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-3">
                 {ABOUT.highlights.map((h) => (
                   <div key={h.label} className="bg-ink p-5">
                     <dt className="font-display text-xl font-bold text-accent-soft">{h.value}</dt>
@@ -78,7 +78,7 @@ export default function AboutPage() {
               { label: "届别学历", value: "2027 届硕士" },
               { label: "院校专业", value: "情报学（数据科学方向）" },
               { label: "政治面貌", value: "中共党员" },
-              { label: "到岗时间", value: "2027.07" },
+              { label: "求职意向", value: "AI 产品经理" },
             ].map((item) => (
               <div key={item.label} className="bg-ink p-5">
                 <dt className="text-[10px] uppercase tracking-[0.2em] text-faint">

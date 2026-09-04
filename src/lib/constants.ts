@@ -27,9 +27,9 @@ export const PERSONAL = {
   phone: "16603798810",
   email: "1079466805@qq.com",
   location: "全国可到岗",
-  available: "2027 届校招 · AI 产品经理（应届生）· 2027.7 到岗",
+  available: "2027 届校招 · AI 产品经理（应届生）",
   degree: "2027 届硕士 · 天津师范大学情报学（数据科学方向）",
-  meta: ["2027 届硕士", "中共党员", "2027.07 到岗"],
+  meta: ["2027 届硕士", "中共党员"],
   avatar: "/images/avatar.jpg",
   resume: `${BASE_PATH}/许隆鑫-AI产品经理简历.pdf`,
 };
@@ -51,7 +51,6 @@ export const ABOUT = {
     { value: "3.82/4", label: "GPA · 年级第 1" },
     { value: "国赛三等奖", label: "全国 AI 创新大赛" },
     { value: "3×", label: "国家励志奖学金" },
-    { value: "2027.7", label: "毕业时间 · 可到岗" },
   ],
   focus: [
     { title: "Prompt Engineering", desc: "结构化 Prompt 标准与模型评测体系" },
