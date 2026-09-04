@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" fill="none">
+  <defs>
+    <linearGradient id="ed" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c6cff"/>
+      <stop offset="1" stop-color="#c8b6ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="320" rx="20" fill="#12141b"/>
+  <!-- document card -->
+  <rect x="120" y="60" width="240" height="200" rx="16" fill="#1a1d26" stroke="#7c6cff" stroke-opacity="0.35"/>
+  <!-- lines representing questions -->
+  <rect x="144" y="92" width="150" height="8" rx="4" fill="url(#ed)"/>
+  <rect x="144" y="116" width="192" height="6" rx="3" fill="#2a2e3a"/>
+  <rect x="144" y="134" width="170" height="6" rx="3" fill="#2a2e3a"/>
+  <rect x="144" y="166" width="120" height="8" rx="4" fill="url(#ed)" opacity="0.7"/>
+  <rect x="144" y="190" width="192" height="6" rx="3" fill="#2a2e3a"/>
+  <rect x="144" y="208" width="140" height="6" rx="3" fill="#2a2e3a"/>
+  <!-- agent chip -->
+  <circle cx="320" cy="232" r="22" fill="url(#ed)"/>
+  <circle cx="320" cy="226" r="6" fill="#0a0b10"/>
+  <path d="M310 242 Q320 250 330 242" stroke="#0a0b10" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <!-- input arrow -->
+  <path d="M60 160 H110" stroke="#7c6cff" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="4 4"/>
+  <path d="M106 156 L112 160 L106 164" stroke="#7c6cff" stroke-width="2" fill="none"/>
+  <text x="60" y="150" font-family="Space Grotesk, sans-serif" font-size="10" fill="#6b7080">教师需求</text>
+  <!-- output -->
+  <path d="M360 160 H410" stroke="#c8b6ff" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="4 4"/>
+  <path d="M406 156 L412 160 L406 164" stroke="#c8b6ff" stroke-width="2" fill="none"/>
+  <text x="372" y="150" font-family="Space Grotesk, sans-serif" font-size="10" fill="#6b7080">JSON 指令</text>
+  <text x="240" y="40" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-size="13" fill="#a1a5b0" letter-spacing="2">AI AGENT · EXAM DESIGN</text>
+</svg>

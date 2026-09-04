@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-space-grotesk), "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-sans: var(--font-inter), "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+}
+
+@theme {
+  --color-ink: #0b0b0f;
+  --color-surface: #121218;
+  --color-elevated: #191922;
+  --color-ivory: #f2efe9;
+  --color-muted: #a09c94;
+  --color-faint: #6d6a64;
+  --color-line: rgba(242, 239, 233, 0.09);
+  --color-accent: #8b7cff;
+  --color-accent-soft: #b9afff;
+  --color-lime: #d3f36b;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-ivory);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: rgba(139, 124, 255, 0.35);
+  color: #fff;
+}
+
+/* ---- 瑞士网格底纹 ---- */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(242, 239, 233, 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(242, 239, 233, 0.045) 1px, transparent 1px);
+  background-size: 72px 72px;
+}
+
+.bg-noise {
+  position: relative;
+}
+.bg-noise::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- 跑马灯 ---- */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 36s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ---- 图片加载淡入 ---- */
+.img-fade {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.img-fade.img-loaded {
+  opacity: 1;
+}
+
+/* ---- 描边大字 ---- */
+.text-outline {
+  -webkit-text-stroke: 1px rgba(242, 239, 233, 0.14);
+  color: transparent;
+}
+
+/* ---- 滚动条 ---- */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #2a2a35;
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3a3a48;
+}

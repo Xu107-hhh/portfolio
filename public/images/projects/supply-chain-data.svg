@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" fill="none">
+  <defs>
+    <linearGradient id="sc" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c6cff"/>
+      <stop offset="1" stop-color="#c8b6ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="320" rx="20" fill="#12141b"/>
+  <!-- database cylinders -->
+  <g>
+    <ellipse cx="150" cy="92" rx="58" ry="18" fill="#1a1d26" stroke="#7c6cff" stroke-opacity="0.5"/>
+    <path d="M92 92 v84 c0 10 26 18 58 18 s58 -8 58 -18 v-84" fill="#1a1d26" stroke="#7c6cff" stroke-opacity="0.5"/>
+    <ellipse cx="150" cy="122" rx="58" ry="18" fill="none" stroke="#7c6cff" stroke-opacity="0.3"/>
+    <ellipse cx="150" cy="152" rx="58" ry="18" fill="none" stroke="#7c6cff" stroke-opacity="0.3"/>
+  </g>
+  <!-- join lines -->
+  <path d="M214 110 C 260 110, 260 150, 300 150" stroke="#7c6cff" stroke-opacity="0.4" stroke-width="2"/>
+  <path d="M214 176 C 260 176, 260 150, 300 150" stroke="#7c6cff" stroke-opacity="0.4" stroke-width="2"/>
+  <!-- report table -->
+  <rect x="300" y="96" width="112" height="108" rx="12" fill="#1a1d26" stroke="#7c6cff" stroke-opacity="0.35"/>
+  <rect x="318" y="116" width="52" height="8" rx="4" fill="url(#sc)"/>
+  <rect x="318" y="140" width="76" height="5" rx="2.5" fill="#3a3f52"/>
+  <rect x="318" y="156" width="64" height="5" rx="2.5" fill="#3a3f52"/>
+  <rect x="318" y="172" width="70" height="5" rx="2.5" fill="#3a3f52"/>
+  <!-- chart bars -->
+  <rect x="118" y="230" width="20" height="44" rx="4" fill="#7c6cff" fill-opacity="0.85"/>
+  <rect x="150" y="246" width="20" height="28" rx="4" fill="#5b54d8"/>
+  <rect x="182" y="222" width="20" height="52" rx="4" fill="#c8b6ff" fill-opacity="0.7"/>
+  <path d="M112 224 L152 240 L192 214" stroke="#d3f36b" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4"/>
+  <!-- sql tag -->
+  <rect x="286" y="238" width="70" height="26" rx="13" fill="#1a1d26" stroke="#7c6cff" stroke-opacity="0.5"/>
+  <text x="298" y="256" fill="#c8b6ff" font-family="monospace" font-size="13">SQL</text>
+</svg>

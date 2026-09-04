@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 320" fill="none">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7c6cff"/>
+      <stop offset="0.5" stop-color="#5b8cff"/>
+      <stop offset="1" stop-color="#c8b6ff"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7c6cff" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#5b8cff" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+  <rect width="480" height="320" rx="20" fill="#12141b"/>
+  <rect width="480" height="320" rx="20" fill="url(#g2)"/>
+  <!-- pipeline nodes -->
+  <g>
+    <rect x="40" y="130" width="78" height="60" rx="12" fill="url(#g1)"/>
+    <rect x="148" y="130" width="78" height="60" rx="12" fill="#1a1d26" stroke="#7c6cff" stroke-opacity="0.5"/>
+    <rect x="256" y="130" width="78" height="60" rx="12" fill="#1a1d26" stroke="#5b8cff" stroke-opacity="0.5"/>
+    <rect x="364" y="130" width="78" height="60" rx="12" fill="#1a1d26" stroke="#c8b6ff" stroke-opacity="0.5"/>
+    <!-- connectors -->
+    <path d="M118 160 H148 M226 160 H256 M334 160 H364" stroke="#7c6cff" stroke-opacity="0.5" stroke-width="2" stroke-dasharray="4 4"/>
+    <!-- arrows -->
+    <path d="M144 156 L150 160 L144 164" stroke="#7c6cff" stroke-width="2" fill="none"/>
+    <path d="M252 156 L258 160 L252 164" stroke="#5b8cff" stroke-width="2" fill="none"/>
+    <path d="M360 156 L366 160 L360 164" stroke="#c8b6ff" stroke-width="2" fill="none"/>
+  </g>
+  <!-- spark dots -->
+  <circle cx="70" cy="80" r="3" fill="#34d3b8"/>
+  <circle cx="200" cy="60" r="2" fill="#7c6cff"/>
+  <circle cx="380" cy="90" r="2.5" fill="#c8b6ff"/>
+  <circle cx="120" cy="240" r="2" fill="#5b8cff"/>
+  <circle cx="330" cy="250" r="3" fill="#34d3b8"/>
+  <!-- labels -->
+  <text x="240" y="40" text-anchor="middle" font-family="Space Grotesk, Inter, sans-serif" font-size="13" fill="#a1a5b0" letter-spacing="2">AI ANIMATION PIPELINE</text>
+</svg>
