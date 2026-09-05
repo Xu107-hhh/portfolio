@@ -51,8 +51,8 @@ basePath（见 `next.config.ts` 与 `FadeImage`）；本地构建该变量为空
 
 GitHub Pages 在大陆不挂代理难以访问，故在腾讯云 CloudBase 维护一份静态镜像（2026-09-05 上线）：
 
-- **国内直连地址**：https://my-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com
-  （等效别名：https://me-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com 与 https://portfolio-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com ，三个域名指向同一份静态托管内容）
+- **国内直连地址**：https://portfolio-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com
+  （等效别名：https://my-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com 与 https://me-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com ，三个域名指向同一份静态托管内容）
 - 环境：`xu-d9gozqmzc1ff7c219`（别名 xu，上海，体验版/免费，**2027-03-05 到期需手动续**，
   续费入口：tcb.cloud.tencent.com → 对应环境 → 续费，或直接让 ZCode 办）
 - 部署方式二选一：
@@ -64,6 +64,23 @@ GitHub Pages 在大陆不挂代理难以访问，故在腾讯云 CloudBase 维�
 
 日常改站节奏：改 `src/lib/constants.ts` → push main（GitHub Pages 自动更新）→
 跑一次部署同步国内镜像（两条命令或一句话让 ZCode 干）。
+
+## Netlify 镜像（干净备用链，观察期）
+
+**https://xulongxin.netlify.app** —— 子域名自选、**无中间页**、免费无到期问题；
+实测国内直连全路由 200（走 AWS 新加坡节点，1-2s）。当前处于**观察期**：
+netlify.app 历史上曾有过被间歇干扰的时期，稳定跑 1-2 周后可升为主链接。
+部署方式：`out/` 目录下 `npx -y netlify deploy --prod --dir=. --site 8ff36589-cc48-4607-9d22-b840e27fdd52`
+（须在仓库外的中性目录跑，否则 CLI 会从上层目录检测到 Next.js 强行走构建）；
+站点构建配置已通过 API 清空（纯静态资产模式）。账号：xu137（qq 邮箱）。
+另有 Cloudflare Workers 测试项目 `personal-website`（workers.dev 国内被墙，已弃用）。
+
+## Cloudflare Workers 镜像（实验性，国内不可达）
+
+同仓库另接了 Cloudflare Workers Builds（项目 `personal-website`，push main 自动构建），
+部署配置在本仓库 `wrangler.jsonc`（纯静态资产模式，不用 OpenNext 适配器）。
+⚠️ 实测 workers.dev 域名在大陆被 DNS 污染（解析到 Facebook 段），**国内打不开**，
+此镜像仅作学习/海外备用，HR 链接请用上面的 CloudBase 地址。
 
 ## 内容维护
 

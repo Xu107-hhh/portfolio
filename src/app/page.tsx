@@ -48,7 +48,7 @@ export default function Home() {
                   {PERSONAL.role} · {PERSONAL.roleDetail}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-muted md:text-lg">
-                  情报学硕士背景，精准学（阿里战投 · 准独角兽）AI 产品实习，主导动画制作
+                  情报学（信息资源管理 · 数据科学系 · 人工智能应用研究方向）硕士背景，精准学（阿里战投 · 准独角兽）AI 产品实习，主导动画制作
                   环节的内部提效——擅长把模糊的「AI 提效」需求拆成场景、流程、验证指标与可交付方案，
                   把 AI 能力转化为可验证、可交付的产品价值。
                 </p>

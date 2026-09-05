@@ -9,7 +9,7 @@ import { PERSONAL, ABOUT, EDUCATION, EXPERIENCE, SKILLS, AWARDS, METHODOLOGY } f
 export const metadata: Metadata = {
   title: "关于我",
   description:
-    "许隆鑫 — AI 产品经理。情报学硕士（数据科学方向），从模型评测到产品落地的完整实战经验，坚持五级证据分级与「先验证、再扩张」的工作纪律。",
+    "许隆鑫 — AI 产品经理。情报学硕士（信息资源管理 · 数据科学系 · 人工智能应用研究方向），从模型评测到产品落地的完整实战经验，坚持五级证据分级与「先验证、再扩张」的工作纪律。",
 };
 
 export default function AboutPage() {
@@ -76,7 +76,7 @@ export default function AboutPage() {
           <dl className="mt-10 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-4">
             {[
               { label: "届别学历", value: "2027 届硕士" },
-              { label: "院校专业", value: "情报学（数据科学方向）" },
+              { label: "院校专业", value: "情报学（信息资源管理 · 数据科学系 · 人工智能应用研究方向）" },
               { label: "政治面貌", value: "中共党员" },
               { label: "求职意向", value: "AI 产品经理" },
             ].map((item) => (
