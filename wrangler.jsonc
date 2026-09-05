@@ -1,0 +1,13 @@
+// Cloudflare Workers 静态资产部署配置（配合 CF Workers Builds 的 `npx wrangler deploy`）。
+// 本站是 Next.js 静态导出（output: "export"），无需 OpenNext 适配器——
+// 直接把构建产物 out/ 作为纯静态资产发布。
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "personal-website",
+  "compatibility_date": "2026-09-05",
+  "assets": {
+    "directory": "./out",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}

@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "deploy:cn": "next build && npx -y @cloudbase/cli hosting deploy out / -e xu-d9gozqmzc1ff7c219"
   },
   "dependencies": {
     "clsx": "^2.1.1",
