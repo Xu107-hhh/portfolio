@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { IBM_Plex_Mono, Noto_Serif_SC } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToTop from "@/components/BackToTop";
 import { PERSONAL } from "@/lib/constants";
 
-const inter = Inter({
+const notoSerifSC = Noto_Serif_SC({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["700", "900"],
+  variable: "--font-noto-serif",
   display: "swap",
 });
 
-const spaceGrotesk = Space_Grotesk({
+const plexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -75,14 +77,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-CN" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+    <html lang="zh-CN" className={`${notoSerifSC.variable} ${plexMono.variable}`}>
       <body className="bg-ink font-sans text-ivory antialiased">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <Navbar />
-        <main className="pt-16">{children}</main>
+        <main className="pt-24">{children}</main>
         <Footer />
         <BackToTop />
       </body>

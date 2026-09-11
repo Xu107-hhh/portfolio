@@ -1,11 +1,13 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-display: var(--font-space-grotesk), "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
-  --font-sans: var(--font-inter), "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-display: var(--font-noto-serif), "Songti SC", "STSong", "SimSun", serif;
+  --font-sans: ui-sans-serif, system-ui, "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
 }
 
 @theme {
+  /* 墨场（dark） */
   --color-ink: #0b0b0f;
   --color-surface: #121218;
   --color-elevated: #191922;
@@ -13,9 +15,16 @@
   --color-muted: #a09c94;
   --color-faint: #6d6a64;
   --color-line: rgba(242, 239, 233, 0.09);
-  --color-accent: #8b7cff;
-  --color-accent-soft: #b9afff;
-  --color-lime: #d3f36b;
+
+  /* 纸面（light report） */
+  --color-paper: #f2eee6;
+  --color-paper-card: #fbf9f3;
+  --color-paper-muted: #6f6a60;
+  --color-paper-line: rgba(11, 11, 15, 0.08);
+
+  /* 验收印蓝 */
+  --color-accent: #3b5bdb;
+  --color-accent-soft: #a3b8ff;
 }
 
 html {
@@ -28,12 +37,23 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* 英文微标签统一走等宽字体（编号小节、kicker、角标）——档案感 */
+[class*="tracking-["] {
+  font-family: var(--font-mono);
+}
+
 ::selection {
-  background: rgba(139, 124, 255, 0.35);
+  background: rgba(59, 91, 219, 0.28);
   color: #fff;
 }
 
-/* ---- 瑞士网格底纹 ---- */
+/* ---- 纸面报告区 ---- */
+.section-paper {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* ---- 墨场底纹 ---- */
 .bg-grid {
   background-image:
     linear-gradient(to right, rgba(242, 239, 233, 0.045) 1px, transparent 1px),
@@ -82,6 +102,18 @@ body {
 .text-outline {
   -webkit-text-stroke: 1px rgba(242, 239, 233, 0.14);
   color: transparent;
+}
+.text-outline-ink {
+  -webkit-text-stroke: 1.5px rgba(11, 11, 15, 0.13);
+  color: transparent;
+}
+
+/* ---- 纸面软阴影卡片 ---- */
+.shadow-paper-card {
+  box-shadow: 0 18px 50px -24px rgba(32, 22, 14, 0.35);
+}
+.shadow-paper-card:hover {
+  box-shadow: 0 26px 64px -26px rgba(32, 22, 14, 0.45);
 }
 
 /* ---- 滚动条 ---- */
