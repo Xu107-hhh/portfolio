@@ -99,8 +99,7 @@ async function readBody(request) {
   }
 }
 
-export async function onRequest(context) {
-  const { request, env } = context;
+export async function onRequest(context) {  const { request, env } = context;
   if (request.method !== "POST") return json({ error: { message: "Method Not Allowed" } }, 405);
 
   const apiKey = (env && (env.MAKERS_MODELS_KEY || env.AI_GATEWAY_KEY)) || "";
@@ -148,3 +147,6 @@ export async function onRequest(context) {
     },
   });
 }
+
+// 兼容两种 Handler 约定：具名 onRequest + default 导出
+export default onRequest;
