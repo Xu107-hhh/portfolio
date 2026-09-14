@@ -56,6 +56,30 @@ Prompt Engineering；AI Coding（Claude Code / Codex / Cursor）；Agent 开发�
 const GATEWAY_URL = "https://ai-gateway.edgeone.link/v1/chat/completions";
 const DEFAULT_MODEL = "@makers/deepseek-v4-flash";
 
+// 出站目标固定为平台模型网关：https + 主机白名单 + 私网地址拦截，防 SSRF
+const GATEWAY_HOST_ALLOWLIST = new Set(["ai-gateway.edgeone.link"]);
+const PRIVATE_HOST_PATTERNS = [
+  /^localhost$/i,
+  /^127\./,
+  /^10\./,
+  /^192\.168\./,
+  /^172\.(1[6-9]|2\d|3[01])\./,
+  /^169\.254\./,
+  /^::1$/,
+  /^\[?fe80/i,
+  /\.local$/i,
+  /\.internal$/i,
+];
+function resolveUpstreamUrl() {
+  const u = new URL(GATEWAY_URL);
+  const blocked =
+    u.protocol !== "https:" ||
+    !GATEWAY_HOST_ALLOWLIST.has(u.hostname) ||
+    PRIVATE_HOST_PATTERNS.some((re) => re.test(u.hostname));
+  if (blocked) throw new Error("upstream blocked by allowlist");
+  return u;
+}
+
 // 请求约束：省 Token、防滥用
 const MAX_TURNS = 8; // 最多携带最近 8 条历史
 const MAX_INPUT_CHARS = 800; // 单条输入截断
@@ -105,6 +129,14 @@ export async function onRequest(context) {  const { request, env } = context;
   const apiKey = (env && (env.MAKERS_MODELS_KEY || env.AI_GATEWAY_KEY)) || "";
   if (!apiKey) return json({ error: { message: "服务未配置，请稍后再试" } }, 503);
 
+  // 出站目标白名单校验（仅校验配置常量，与用户输入无关）
+  let upstreamUrl;
+  try {
+    upstreamUrl = resolveUpstreamUrl();
+  } catch {
+    return json({ error: { message: "网关配置错误" } }, 500);
+  }
+
   // 同源校验：带 Origin 且非本站来源时拒绝
   const origin = request.headers.get("origin");
   if (origin) {
@@ -119,7 +151,7 @@ export async function onRequest(context) {  const { request, env } = context;
   const messages = await readBody(request);
   if (!messages) return json({ error: { message: "请求格式有误" } }, 400);
 
-  const upstream = await fetch(GATEWAY_URL, {
+  const upstream = await fetch(upstreamUrl, {
     method: "POST",
     headers: {
       "content-type": "application/json",
