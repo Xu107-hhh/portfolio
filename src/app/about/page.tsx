@@ -73,14 +73,30 @@ export default function AboutPage() {
 
         {/* 基本信息 */}
         <Reveal>
-          <dl className="mt-10 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-4">
+          <dl className="mt-10 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-5">
             {[
               { label: "届别学历", value: "2027 届硕士" },
-              { label: "院校专业", value: "情报学（信息资源管理 · 数据科学系 · 人工智能应用研究方向）" },
+              {
+                label: "院校专业",
+                value: (
+                  <>
+                    情报学
+                    {/* 移动端随文自然换行；md+ 括号段独立一行（缩号+禁折行，防溢出到第三行） */}
+                    <span className="md:hidden">（信息资源管理 · 数据科学系）</span>
+                    <span className="hidden md:block md:whitespace-nowrap md:text-[11px] md:font-normal md:text-muted md:mt-1">
+                      （信息资源管理·数据科学系）
+                    </span>
+                  </>
+                ),
+              },
+              { label: "研究方向", value: "人工智能应用研究" },
               { label: "政治面貌", value: "中共党员" },
               { label: "求职意向", value: "AI 产品经理" },
             ].map((item) => (
-              <div key={item.label} className="bg-ink p-5">
+              <div
+                key={item.label}
+                className={`bg-ink p-5 ${item.label === "求职意向" ? "max-md:col-span-2" : ""}`}
+              >
                 <dt className="text-[10px] uppercase tracking-[0.2em] text-faint">
                   {item.label}
                 </dt>
