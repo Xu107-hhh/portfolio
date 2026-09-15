@@ -51,7 +51,7 @@ export const ABOUT = {
   ],
   highlights: [
     { value: "3.82/4", label: "GPA · 专业第 1" },
-    { value: "国赛三等奖", label: "全国 AI 创新大赛" },
+    { value: "国家三等奖", label: "全国人工智能应用创新大赛" },
     { value: "3×", label: "国家励志奖学金" },
   ],
   focus: [
@@ -278,7 +278,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "按学术型（高二期末、高难度）、基础型、竞赛型三类场景设计提示词并验证真实出卷效果；针对大纲理解粒度不足问题，提出引入学科知识图谱、要求生成内容附引用溯源的改进建议",
     ],
     impact: [
-      { value: "国赛三等奖", label: "全国 AI 创新大赛" },
+      { value: "国家三等奖", label: "全国人工智能应用创新大赛" },
       { value: "3 类", label: "出卷场景真实验证" },
       { value: "RAG", label: "检索增强生成" },
       { value: "JSON 化", label: "意图识别策略" },
