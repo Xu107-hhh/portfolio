@@ -99,11 +99,20 @@ export default async function WorkDetailPage({ params }: WorkDetailProps) {
         <p className="mt-10 max-w-3xl text-lg leading-loose text-ivory/90">{study.summary}</p>
       </Reveal>
 
-      {/* 量化结果 */}
+      {/* 量化结果（列数跟随指标数量，避免单数时留空格） */}
       <Reveal>
-        <dl className="mt-10 grid grid-cols-2 gap-px border border-line bg-line md:grid-cols-4">
-          {study.impact.map((m) => (
-            <div key={m.label} className="bg-ink p-6">
+        <dl
+          className={`mt-10 grid grid-cols-2 gap-px border border-line bg-line ${
+            study.impact.length === 3 ? "md:grid-cols-3" : "md:grid-cols-4"
+          }`}
+        >
+          {study.impact.map((m, i) => (
+            <div
+              key={m.label}
+              className={`bg-ink p-6 ${
+                study.impact.length % 2 === 1 && i === study.impact.length - 1 ? "max-md:col-span-2" : ""
+              }`}
+            >
               <dt className="font-display text-2xl font-bold text-accent-soft md:text-3xl">
                 {m.value}
               </dt>
@@ -190,8 +199,13 @@ export default async function WorkDetailPage({ params }: WorkDetailProps) {
                         {group} · {items.length} 项
                       </p>
                       <div className="mt-3 grid gap-px border border-line bg-line sm:grid-cols-2">
-                        {items.map((tool) => (
-                          <div key={tool.name} className="group bg-ink p-5 transition-colors hover:bg-surface">
+                        {items.map((tool, ti) => (
+                          <div
+                            key={tool.name}
+                            className={`group bg-ink p-5 transition-colors hover:bg-surface ${
+                              items.length % 2 === 1 && ti === items.length - 1 ? "sm:col-span-2" : ""
+                            }`}
+                          >
                             <span className="inline-block border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent">
                               {tool.form}
                             </span>
