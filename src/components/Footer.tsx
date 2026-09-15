@@ -22,7 +22,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-faint">导航</p>
+            <p className="text-xs uppercase tracking-widest text-faint">导航</p>
             <ul className="mt-4 space-y-2.5">
               {NAV_LINKS.map((link) => (
                 <li key={link.href}>
@@ -38,10 +38,10 @@ export default function Footer() {
           </div>
 
           <div>
-            <p className="text-xs uppercase tracking-[0.2em] text-faint">社交</p>
+            <p className="text-xs uppercase tracking-widest text-faint">社交</p>
             <ul className="mt-4 space-y-2.5">
               {[
-                { icon: GithubIcon, label: "GitHub", href: "https://github.com/" },
+                { icon: GithubIcon, label: "GitHub", href: "https://github.com/Xu107-hhh" },
                 { icon: Mail, label: PERSONAL.email, href: `mailto:${PERSONAL.email}` },
                 { icon: Phone, label: PERSONAL.phone, href: `tel:${PERSONAL.phone}` },
                 { icon: FileText, label: "下载简历", href: PERSONAL.resume },
@@ -62,7 +62,7 @@ export default function Footer() {
 
         <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-line pt-6 text-xs text-faint md:flex-row md:items-center">
           <p>© 2026 {PERSONAL.name} · {PERSONAL.role}</p>
-          <p className="font-display tracking-widest">DESIGNED & BUILT WITH NEXT.JS</p>
+          <p className="font-mono tracking-widest">DESIGNED & BUILT WITH NEXT.JS</p>
         </div>
       </div>
     </footer>

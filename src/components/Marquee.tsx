@@ -7,7 +7,7 @@ export default function Marquee() {
       <div className="animate-marquee flex w-max items-center">
         {items.map((item, i) => (
           <span key={i} className="flex items-center">
-            <span className="font-display text-sm uppercase tracking-[0.2em] text-muted">
+            <span className="font-display text-sm uppercase tracking-widest text-muted">
               {item}
             </span>
             <span className="mx-6 h-1.5 w-1.5 rotate-45 bg-accent" />
