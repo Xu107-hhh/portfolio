@@ -225,7 +225,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     ],
     impact: [
       { value: "11 项", label: "工具与作品 · 4 款进真实生产" },
-      { value: "40→20 min", label: "单剧本剪辑处理 · 专人制作→新手自助（GUI/Skill 双入口）" },
+      { value: "40→20 min", label: "视频剪辑处理 · 专人制作→新手自动（GUI/Skill 双入口）" },
       { value: "30→3~5 min", label: "单剧本资料整理" },
     ],
     tech: ["Prompt Engineering", "Python", "PPT COM / python-pptx", "VLM（Doubao-Seed）", "FastAPI", "rembg / U2Net", "Next.js"],
