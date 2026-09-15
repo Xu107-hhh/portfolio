@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Send, Sparkles, X } from "lucide-react";
+import { Send, X } from "lucide-react";
+import AiBuddy from "./AiBuddy";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -106,15 +107,15 @@ export default function AskAI() {
 
   return (
     <>
-      {/* 悬浮球 */}
+      {/* 悬浮球：卡通小人（纸面奶油底 + 深蓝卫衣，呼应站点档案风） */}
       <button
         onClick={() => setOpen(true)}
         aria-label="打开 AI 问答"
-        className={`group fixed bottom-6 right-6 z-50 flex h-[52px] w-[52px] items-center justify-center rounded-full bg-gradient-to-br from-[#3b5bdb] to-[#7c9dff] text-white shadow-lg shadow-[#3b5bdb]/30 transition-all duration-300 hover:scale-105 ${
+        className={`group fixed bottom-6 right-6 z-50 flex h-[56px] w-[56px] items-center justify-center rounded-full bg-paper-card ring-1 ring-line shadow-lg shadow-[#3b5bdb]/40 transition-all duration-300 hover:scale-105 ${
           open ? "pointer-events-none scale-90 opacity-0" : "opacity-100"
         }`}
       >
-        <Sparkles size={22} />
+        <AiBuddy size={50} />
         <span className="pointer-events-none absolute -top-9 right-0 whitespace-nowrap rounded-md border border-line bg-elevated px-2.5 py-1 text-xs text-ivory opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           问问 AI
         </span>
@@ -125,8 +126,8 @@ export default function AskAI() {
         <div className="fixed bottom-6 right-6 z-50 flex h-[min(560px,calc(100dvh-6rem))] w-[min(380px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl">
           <div className="flex items-center justify-between border-b border-line bg-elevated px-4 py-3">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#3b5bdb] to-[#7c9dff] text-white">
-                <Sparkles size={15} />
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-paper-card ring-1 ring-line">
+                <AiBuddy size={24} />
               </span>
               <div>
                 <p className="text-sm font-semibold text-ivory">问问 AI · 关于许隆鑫</p>

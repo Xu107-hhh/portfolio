@@ -179,6 +179,12 @@ body {
   .animate-marquee {
     animation: none;
   }
+  .vox-eye,
+  .vox-arm,
+  .vox-float,
+  .vox-glow {
+    animation: none;
+  }
 }
 
 /* ---- 滚动条 ---- */
@@ -195,4 +201,58 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #3a3a48;
+}
+
+/* ---- Ask AI 3D 像素小人（AiBuddy 体素版）---- */
+@keyframes vox-blink {
+  0%,
+  91%,
+  97%,
+  100% {
+    transform: scaleY(1);
+  }
+  94% {
+    transform: scaleY(0.08);
+  }
+}
+@keyframes vox-wave {
+  0%,
+  100% {
+    transform: rotate(9deg);
+  }
+  50% {
+    transform: rotate(-21deg);
+  }
+}
+@keyframes vox-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes vox-glow-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.vox-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: vox-blink 4.6s infinite;
+}
+.vox-arm {
+  animation: vox-wave 1.7s ease-in-out infinite;
+}
+.vox-float {
+  animation: vox-bob 3s ease-in-out infinite;
+}
+.vox-glow {
+  animation: vox-glow-pulse 2.4s ease-in-out infinite;
 }
