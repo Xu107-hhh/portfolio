@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>pet-lab · 姿态总览</title>
+<style>
+  body { margin: 0; padding: 28px; background: #0b0b0f; color: #f2efe9;
+         font: 13px/1.5 ui-sans-serif, system-ui, "PingFang SC", "Microsoft YaHei", sans-serif; }
+  h1 { font-size: 16px; letter-spacing: .08em; margin: 0 0 4px; }
+  p.sub { color: #6d6a64; margin: 0 0 24px; font-size: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 14px; }
+  @media (max-width: 900px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+  .cell { border: 1px solid rgba(242,239,233,.09); border-radius: 12px;
+          background: #121218; padding: 10px 8px 8px; text-align: center; }
+  .cell svg { width: 100%; height: auto; display: block; filter: drop-shadow(0 0 7px rgba(163,184,255,.22)); }
+  .cell b { display: block; margin-top: 8px; font-size: 11.5px; letter-spacing: .06em; color: #a3b8ff; font-weight: 500; }
+  .cell small { color: #6d6a64; font-size: 10.5px; }
+  /* 尺寸对照：模拟真实页面里的渲染大小 */
+  .sizes { display: flex; align-items: flex-end; gap: 26px; margin-top: 30px;
+           border-top: 1px solid rgba(242,239,233,.09); padding-top: 22px; }
+  .sizes figure { margin: 0; text-align: center; }
+  .sizes figcaption { font-size: 10.5px; color: #6d6a64; margin-top: 6px; }
+</style>
+</head>
+<body>
+<h1>PET-LAB · 姿态总览</h1>
+<p class="sub">像素骨架渲染检查 —— 同一套骨架上切换表情 / 手臂 / 道具层。</p>
+<div class="grid" id="grid"></div>
+
+<div class="sizes" id="sizes">
+  <div style="font-size:10.5px;color:#6d6a64;align-self:center;margin-right:8px">真实尺寸<br />对照 →</div>
+</div>
+
+<script type="module">
+  import { buildPose, VB, VIEWBOX, POSES } from "./pet-rig.js";
+
+  const render = (name) => {
+    const { groups } = buildPose(name);
+    const inner = Object.keys(groups).map((layer) => {
+      const rects = groups[layer].map((r) => `<rect x="${r.x}" y="${r.y}" width="1" height="1" fill="${r.c}"/>`).join("");
+      return `<g>${rects}</g>`;
+    }).join("");
+    return `<svg viewBox="${VIEWBOX}" shape-rendering="crispEdges">${inner}</svg>`;
+  };
+
+  const NOTE = {
+    idle: "站立呼吸", walk: "迈腿", wave: "打招呼", cheer: "冲！", thumb: "点赞",
+    think: "思考中", hmm: "疑惑", idea: "有想法", focus: "专注", sip: "喝咖啡",
+    sleep: "打盹", listen: "听你说", point: "指向内容",
+  };
+
+  const grid = document.getElementById("grid");
+  for (const name of Object.keys(POSES)) {
+    const d = document.createElement("div");
+    d.className = "cell";
+    d.innerHTML = render(name) + `<b>${name}</b><small>${NOTE[name] || ""}</small>`;
+    grid.appendChild(d);
+  }
+
+  const sizes = document.getElementById("sizes");
+  for (const s of [1.6, 2.0, 2.5, 3.2, 4.0]) {
+    const f = document.createElement("figure");
+    const w = (VB.w * s).toFixed(0);
+    const svg = render("wave").replace("<svg ", `<svg style="width:${w}px" `);
+    f.innerHTML = svg + `<figcaption>scale ${s} · ${w}px</figcaption>`;
+    sizes.appendChild(f);
+  }
+</script>
+</body>
+</html>
