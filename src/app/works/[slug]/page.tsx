@@ -174,27 +174,36 @@ export default async function WorkDetailPage({ params }: WorkDetailProps) {
             </section>
           </Reveal>
 
-          {/* 工具与作品矩阵 */}
+          {/* 工具与作品全景（按工作流分组：提效矩阵 / 学习机数据线等） */}
           {study.subTools && (
             <Reveal>
               <section className="mt-12">
                 <h2 className="flex items-baseline gap-3 font-display text-2xl font-bold">
                   <span className="font-display text-sm text-accent">03</span>
-                  工具与作品矩阵
+                  工具与作品全景
                 </h2>
-                <div className="mt-5 grid gap-px border border-line bg-line sm:grid-cols-2">
-                  {study.subTools.map((tool) => (
-                    <div key={tool.name} className="group bg-ink p-5 transition-colors hover:bg-surface">
-                      <span className="inline-block border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent">
-                        {tool.form}
-                      </span>
-                      <h3 className="mt-2.5 text-sm font-semibold text-ivory group-hover:text-accent-soft">
-                        {tool.name}
-                      </h3>
-                      <p className="mt-2 text-xs leading-relaxed text-muted">{tool.desc}</p>
+                {Array.from(new Set(study.subTools.map((t) => t.group ?? "提效产品矩阵"))).map((group) => (
+                  <div key={group} className="mt-6 first:mt-5">
+                    <p className="font-mono text-[11px] uppercase tracking-[0.2em] text-faint">
+                      {group}
+                    </p>
+                    <div className="mt-3 grid gap-px border border-line bg-line sm:grid-cols-2">
+                      {study.subTools!
+                        .filter((t) => (t.group ?? "提效产品矩阵") === group)
+                        .map((tool) => (
+                          <div key={tool.name} className="group bg-ink p-5 transition-colors hover:bg-surface">
+                            <span className="inline-block border border-accent/40 bg-accent/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent">
+                              {tool.form}
+                            </span>
+                            <h3 className="mt-2.5 text-sm font-semibold text-ivory group-hover:text-accent-soft">
+                              {tool.name}
+                            </h3>
+                            <p className="mt-2 text-xs leading-relaxed text-muted">{tool.desc}</p>
+                          </div>
+                        ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </section>
             </Reveal>
           )}
