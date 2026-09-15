@@ -18,7 +18,7 @@ export default function WorkCard({
       href={`/works/${study.slug}`}
       className={`group block overflow-hidden transition-all duration-300 ${
         paper
-          ? "shadow-paper-card rounded-2xl border border-paper-line bg-paper-card hover:-translate-y-1"
+          ? "shadow-paper-card rounded-2xl border border-paper-line bg-paper-card"
           : "border border-line bg-surface transition-colors hover:border-accent/40"
       }`}
     >
@@ -33,13 +33,15 @@ export default function WorkCard({
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-ink/60 to-transparent opacity-60" />
-        <span
-          className={`absolute left-4 top-4 bg-ink/60 px-2.5 py-1 text-[11px] uppercase tracking-widest text-ivory backdrop-blur-sm ${
-            paper ? "rounded-full border border-ivory/15" : "border border-ivory/20"
-          }`}
-        >
-          {study.category}
-        </span>
+        {paper ? (
+          <span className="archive-chip absolute left-4 top-4 border border-ink/20 bg-paper-card px-3 py-1.5 font-display text-[11px] font-bold text-ink">
+            {study.category}
+          </span>
+        ) : (
+          <span className="absolute left-4 top-4 border border-ivory/20 bg-ink/60 px-2.5 py-1 text-[11px] uppercase tracking-widest text-ivory backdrop-blur-sm">
+            {study.category}
+          </span>
+        )}
       </div>
 
       <div className="p-6">
@@ -67,7 +69,7 @@ export default function WorkCard({
           </span>
         </div>
 
-        <div className={`mt-5 flex flex-wrap gap-x-5 gap-y-1 border-t pt-4 ${paper ? "border-paper-line" : "border-line"}`}>
+        <div className={`mt-5 flex flex-wrap gap-x-5 gap-y-1 border-t border-dashed pt-4 ${paper ? "border-ink/25" : "border-line"}`}>
           {study.impact.slice(0, 3).map((m) => (
             <span key={m.label} className={`text-xs ${paper ? "text-paper-muted" : "text-faint"}`}>
               <span className={`font-display font-bold ${paper ? "text-ink" : "text-ivory"}`}>{m.value}</span>
