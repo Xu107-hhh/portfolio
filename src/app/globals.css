@@ -116,6 +116,71 @@ body {
   box-shadow: 0 26px 64px -26px rgba(32, 22, 14, 0.45);
 }
 
+/* ---- 档案卷宗细节 ---- */
+
+/* 卷宗签条：右上斜切角（像剪出来的标签） */
+.archive-chip {
+  clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+}
+
+/* 档案卡：右上折角 + 随形状投影（drop-shadow 不被 clip 裁掉） */
+.file-card {
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+}
+.file-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: #e9e2d2;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+}
+.file-shadow {
+  filter: drop-shadow(0 16px 22px rgba(32, 22, 14, 0.16));
+  transition: filter 0.3s ease;
+}
+.file-shadow:hover {
+  filter: drop-shadow(0 24px 32px rgba(32, 22, 14, 0.24));
+}
+
+/* 验收单：票据虚线 + 胶带 */
+.tear-line {
+  border-top: 1.5px dashed rgba(11, 11, 15, 0.26);
+}
+.tape {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 104px;
+  height: 26px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(233, 226, 210, 0.55);
+  border-left: 1px dashed rgba(11, 11, 15, 0.14);
+  border-right: 1px dashed rgba(11, 11, 15, 0.14);
+  box-shadow: 0 1px 3px rgba(11, 11, 15, 0.12);
+}
+
+/* 印蓝验收章：印泥斑驳用噪点遮罩模拟；入场旋转交给 framer-motion，勿在此写 transform */
+.stamp {
+  border: 2.5px solid currentColor;
+  border-radius: 5px;
+  mix-blend-mode: multiply;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee {
+    animation: none;
+  }
+}
+
 /* ---- 滚动条 ---- */
 ::-webkit-scrollbar {
   width: 10px;
