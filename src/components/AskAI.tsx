@@ -105,19 +105,51 @@ export default function AskAI() {
 
   const displayed = messages.length ? messages : [GREETING];
 
+  /* --- 桌宠行为：可拖拽挪位置（<6px 位移视为点击） --- */
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null);
+  const dragRef = useRef<{ startX: number; startY: number; moved: boolean } | null>(null);
+
+  function onBuddyPointerDown(e: React.PointerEvent<HTMLButtonElement>) {
+    dragRef.current = { startX: e.clientX, startY: e.clientY, moved: false };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  }
+  function onBuddyPointerMove(e: React.PointerEvent<HTMLButtonElement>) {
+    const d = dragRef.current;
+    if (!d) return;
+    if (!d.moved && Math.hypot(e.clientX - d.startX, e.clientY - d.startY) < 6) return;
+    d.moved = true;
+    const x = Math.min(Math.max(e.clientX, 36), window.innerWidth - 36);
+    const y = Math.min(Math.max(e.clientY, 36), window.innerHeight - 36);
+    setPos({ x, y });
+  }
+  function onBuddyClick() {
+    if (dragRef.current?.moved) {
+      dragRef.current = null;
+      return;
+    }
+    setOpen(true);
+  }
+
   return (
     <>
-      {/* 悬浮球：卡通小人（纸面奶油底 + 深蓝卫衣，呼应站点档案风） */}
+      {/* 桌宠：SVG 小人（纸面奶油底，呼应站点档案风）；可拖拽、悬停开心、点击唤起问答 */}
       <button
-        onClick={() => setOpen(true)}
+        onClick={onBuddyClick}
+        onPointerDown={onBuddyPointerDown}
+        onPointerMove={onBuddyPointerMove}
         aria-label="打开 AI 问答"
-        className={`group fixed bottom-6 right-6 z-50 flex h-[56px] w-[56px] items-center justify-center rounded-full bg-paper-card ring-1 ring-line shadow-lg shadow-[#3b5bdb]/40 transition-all duration-300 hover:scale-105 ${
+        style={
+          pos
+            ? { left: pos.x - 28, top: pos.y - 28, right: "auto", bottom: "auto" }
+            : undefined
+        }
+        className={`group fixed bottom-6 right-6 z-50 flex h-[56px] w-[56px] cursor-grab touch-none items-center justify-center rounded-full bg-paper-card ring-1 ring-line shadow-lg shadow-[#3b5bdb]/40 transition-all duration-300 active:cursor-grabbing hover:scale-105 ${
           open ? "pointer-events-none scale-90 opacity-0" : "opacity-100"
         }`}
       >
         <AiBuddy size={50} />
         <span className="pointer-events-none absolute -top-9 right-0 whitespace-nowrap rounded-md border border-line bg-elevated px-2.5 py-1 text-xs text-ivory opacity-0 transition-opacity duration-200 group-hover:opacity-100">
-          问问 AI
+          点我聊聊 · 可以拖走
         </span>
       </button>
 

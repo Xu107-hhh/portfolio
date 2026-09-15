@@ -3,192 +3,113 @@ type Props = {
   className?: string;
 };
 
-/* ---------- 2D 像素小人（Codex-pet 风格 sprite，人设=黑短发+深蓝连帽卫衣） ---------- */
-
-const W = 28;
-const H = 34;
-
-const C = {
-  hair: "#262631",
-  hairHi: "#3a3a4a",
-  skin: "#f2c9a4",
-  skinSh: "#e2b189",
-  eye: "#262631",
-  blush: "#f0a488",
-  mouth: "#b8564a",
-  hoodie: "#3b5bdb",
-  hoodieDk: "#2f49b5",
-  string: "#f2efe9",
-  pants: "#2a2f45",
-  shoe: "#1d1d27",
-  glow: "#a3b8ff",
-  outline: "#1d1d27",
-} as const;
-
-type Cell = string | null;
-const grid: Cell[][] = Array.from({ length: H }, () => Array<Cell>(W).fill(null));
-
-function rect(x: number, y: number, w: number, h: number, c: string) {
-  for (let yy = y; yy < y + h; yy++)
-    for (let xx = x; xx < x + w; xx++) if (grid[yy]?.[xx] !== undefined) grid[yy][xx] = c;
-}
-
-/** 挥手手臂的像素收集到独立层，肩点 (19.5, 21) 做摆动支点 */
-const armLayer = new Set<string>();
-function armRect(x: number, y: number, w: number, h: number, c: string) {
-  rect(x, y, w, h, c);
-  for (let yy = y; yy < y + h; yy++)
-    for (let xx = x; xx < x + w; xx++) armLayer.add(`${xx},${yy}`);
-}
-
-/** 眼睛像素（眨眼动画目标）用坐标标记，避免与同色头发混淆 */
-const eyeLayer = new Set<string>();
-function eyeRect(x: number, y: number, w: number, h: number) {
-  rect(x, y, w, h, C.eye);
-  for (let yy = y; yy < y + h; yy++)
-    for (let xx = x; xx < x + w; xx++) eyeLayer.add(`${xx},${yy}`);
-}
-
-function buildSprite() {
-  /* --- 头：先脸后发，斜刘海左长右短 --- */
-  rect(6, 9, 16, 8, C.skin); // 脸 y9-16
-  rect(8, 2, 12, 1, C.hair); // 发顶尖
-  rect(7, 3, 14, 1, C.hair);
-  rect(5, 4, 18, 5, C.hair); // 主发 y4-8
-  rect(6, 9, 9, 1, C.hair); // 斜刘海左段（长）
-  rect(18, 9, 4, 1, C.hair); // 斜刘海右段（短），露额头 x15-17
-  rect(5, 9, 1, 3, C.hair); // 左鬓角
-  rect(22, 9, 1, 3, C.hair); // 右鬓角
-  rect(9, 2, 4, 1, C.hairHi); // 发顶高光
-  // 五官（与刘海间隔 2 行，腮红/嘴分排）
-  eyeRect(8, 11, 2, 2);
-  eyeRect(17, 11, 2, 2);
-  rect(7, 14, 2, 1, C.blush);
-  rect(19, 14, 2, 1, C.blush);
-  rect(12, 15, 4, 1, C.mouth);
-  rect(11, 16, 1, 1, C.mouth);
-  rect(16, 16, 1, 1, C.mouth); // 两端下挂凑成微笑弧
-
-  /* --- 身体：深蓝连帽卫衣 --- */
-  rect(12, 17, 4, 2, C.skin); // 脖子
-  rect(8, 19, 12, 2, C.hoodie);
-  rect(7, 21, 14, 8, C.hoodie); // 下摆加宽
-  rect(6, 19, 2, 3, C.hoodieDk); // 帽褶（左肩）
-  rect(20, 19, 2, 3, C.hoodieDk); // 帽褶（右肩）
-  rect(11, 21, 1, 4, C.string); // 抽绳左
-  rect(16, 21, 1, 4, C.string); // 抽绳右
-  rect(10, 25, 7, 1, C.hoodieDk); // 口袋上沿
-
-  /* --- 左臂（垂放） --- */
-  rect(5, 20, 2, 5, C.hoodie);
-  rect(5, 25, 2, 2, C.skin);
-
-  /* --- 右臂（挥手，独立层） --- */
-  armRect(19, 19, 2, 2, C.hoodie); // 肩
-  armRect(20, 17, 2, 2, C.hoodie); // 上臂抬
-  armRect(21, 15, 2, 2, C.hoodie); // 前臂举
-  armRect(22, 13, 2, 2, C.skin); // 手
-
-  /* --- 腿鞋 --- */
-  rect(9, 29, 4, 2, C.pants);
-  rect(15, 29, 4, 2, C.pants);
-  rect(8, 31, 5, 1, C.shoe);
-  rect(15, 31, 5, 1, C.shoe);
-
-  /* --- 星光（挥手旁，与手保持距离） --- */
-  rect(26, 8, 1, 3, C.glow);
-  rect(25, 9, 3, 1, C.glow);
-}
-
-buildSprite();
-
-/** 自动描边：紧邻实心像素的空格填 outline */
-const outlined: Cell[][] = grid.map((row) => [...row]);
-for (let y = 0; y < H; y++)
-  for (let x = 0; x < W; x++) {
-    if (grid[y][x]) continue;
-    const near =
-      grid[y - 1]?.[x] || grid[y + 1]?.[x] || grid[y][x - 1] || grid[y][x + 1];
-    if (near) outlined[y][x] = C.outline;
-  }
-
-/** 像素分层：实心像素按 armLayer；描边像素看四邻（接缝描边归手臂层随摆动） */
-const layerAt = (x: number, y: number): "arm" | "body" | null => {
-  const solid = grid[y]?.[x];
-  if (solid) return armLayer.has(`${x},${y}`) ? "arm" : "body";
-  const neighbors = [
-    [x, y - 1],
-    [x, y + 1],
-    [x - 1, y],
-    [x + 1, y],
-  ];
-  let arm = false;
-  let body = false;
-  for (const [nx, ny] of neighbors) {
-    if (!grid[ny]?.[nx]) continue;
-    if (armLayer.has(`${nx},${ny}`)) arm = true;
-    else body = true;
-  }
-  if (arm) return "arm";
-  if (body) return "body";
-  return null;
-};
-
-const toRects = (want: "body" | "arm") => {
-  const rects: { x: number; y: number; c: string; eye?: boolean; glow?: boolean }[] = [];
-  for (let y = 0; y < H; y++)
-    for (let x = 0; x < W; x++) {
-      const c = outlined[y][x];
-      if (!c) continue;
-      if (layerAt(x, y) !== want) continue;
-      rects.push({
-        x,
-        y,
-        c,
-        eye: eyeLayer.has(`${x},${y}`),
-        glow: c === C.glow,
-      });
-    }
-  return rects;
-};
-
-/** 主体（含描边）与手臂层分开；手臂层连同其描边一起平移到肩点坐标系 */
-const SHOULDER = { x: 19.5, y: 19.5 };
-const bodyRects = toRects("body");
-const armRects = toRects("arm");
-
 /**
- * Ask AI 的 2D 像素小人。挥手/眨眼/漂浮/星光动画由 globals.css 的 .vox-* 类驱动。
+ * Ask AI 网页小宠物：SVG 矢量复刻用户 IP 参考形象——
+ * 黑短发碎刘海、大椭圆眼（双高光）、藏青连帽卫衣（帽塌肩后/白抽绳/袋鼠袋/罗纹）、
+ * 白 T 领口、白运动鞋、深棕描边平涂。挥手/眨眼/漂浮/星光动画走 globals.css 的 .vox-*。
  */
 export default function AiBuddy({ size = 36, className = "" }: Props) {
-  const render = (rects: typeof bodyRects, dx = 0, dy = 0) =>
-    rects.map((r, i) => (
-      <rect
-        key={i}
-        x={r.x - dx}
-        y={r.y - dy}
-        width={1}
-        height={1}
-        fill={r.c}
-        className={r.eye ? "vox-eye" : r.glow ? "vox-glow" : undefined}
-      />
-    ));
-
   return (
     <svg
       width={size}
       height={size}
-      viewBox="3 0 26 34"
+      viewBox="22 8 90 132"
       xmlns="http://www.w3.org/2000/svg"
-      shapeRendering="crispEdges"
       className={className}
       aria-hidden="true"
     >
-      <g className="vox-float">
-        {render(bodyRects)}
-        <g transform={`translate(${SHOULDER.x} ${SHOULDER.y})`}>
-          <g className="vox-arm">{render(armRects, SHOULDER.x, SHOULDER.y)}</g>
+      <defs>
+        {/* 平涂色板：底色 + 深一档阴影（参考图为纯色块阴影，无渐变） */}
+        <clipPath id="buddy-face">
+          <path d="M36,50 C36,30 46,20 60,20 C74,20 84,30 84,50 C84,64 76,72 60,72 C44,72 36,64 36,50 Z" />
+        </clipPath>
+      </defs>
+
+      <g className="vox-float" stroke="#43382e" strokeWidth={1.6} strokeLinejoin="round" strokeLinecap="round">
+        {/* --- 腿与鞋（藏青裤 + 白运动鞋） --- */}
+        <rect x="48" y="110" width="10" height="14" rx="4" fill="#2a3a6e" stroke="none" />
+        <rect x="62" y="110" width="10" height="14" rx="4" fill="#2a3a6e" stroke="none" />
+        <path d="M45,128 q5,-4 11,0 v3 q-5,3 -11,0 Z" fill="#ffffff" />
+        <path d="M60,128 q5,-4 11,0 v3 q-5,3 -11,0 Z" fill="#ffffff" />
+        <path d="M45,131 h11 M60,131 h11" stroke="#c9cdd6" strokeWidth={1.2} />
+
+        {/* --- 帽子（塌在肩后，比身体宽一圈的深蓝底衬） --- */}
+        <path
+          d="M38,88 C38,74 48,68 60,68 C72,68 82,74 82,88 L84,104 L36,104 Z"
+          fill="#26378a"
+        />
+
+        {/* --- 左臂（垂放）：藏青袖 + 罗纹袖口 + 手（起端加腋下垫块补缝） --- */}
+        <path d="M40,80 L46,84 L43,87 L38,83 Z" fill="#33479c" stroke="none" />
+        <path d="M43,79 C37,84 34.5,93 34,102" stroke="#33479c" strokeWidth={9} fill="none" />
+        <path d="M34,100 L34,104" stroke="#26378a" strokeWidth={9} fill="none" />
+        <circle cx="34" cy="110" r={5} fill="#f5cba0" />
+
+        {/* --- 卫衣身体：藏青 + 白 T 领口 + 抽绳 + 袋鼠袋 + 下摆罗纹 --- */}
+        <path
+          d="M42,78 C48,73 54,71 60,71 C66,71 72,73 78,78 L82,104 C82,110 74,113 60,113 C46,113 38,110 38,104 Z"
+          fill="#33479c"
+        />
+        <path d="M48,74 C52,79 68,79 72,74 C70,71 66,70 60,70 C54,70 50,71 48,74 Z" fill="#ffffff" stroke="none" />
+        <path d="M54,80 L53,93 M66,80 L67,93" stroke="#f2efe9" strokeWidth={2.4} />
+        <circle cx="53" cy="94" r={1.8} fill="#f2efe9" stroke="none" />
+        <circle cx="67" cy="94" r={1.8} fill="#f2efe9" stroke="none" />
+        <path d="M48,97 C52,101 68,101 72,97" stroke="#26378a" strokeWidth={2.2} fill="none" />
+        <path d="M38,107 L82,107 L82,112 C82,114 44,114 38,112 Z" fill="#26378a" stroke="none" />
+        {/* 腋下衣褶阴影 */}
+        <path d="M44,80 L48,86 L44,88 Z" fill="#2c3f8a" stroke="none" />
+
+        {/* --- 右臂（挥手）：肩点 (74,84) 独立组摆动，手位略低更舒展 --- */}
+        <g transform="translate(74 84)">
+          <g className="vox-arm">
+            <path d="M0,1 C6,-2 10,-6 13,-11" stroke="#33479c" strokeWidth={9} fill="none" />
+            <path d="M12,-10 L14,-13" stroke="#26378a" strokeWidth={9} fill="none" />
+            <circle cx="16" cy="-15" r={5} fill="#f5cba0" />
+            {/* 挥手星光 */}
+            <path
+              className="vox-glow"
+              d="M24,-28 L25.6,-23.6 L30,-22 L25.6,-20.4 L24,-16 L22.4,-20.4 L18,-22 L22.4,-23.6 Z"
+              fill="#a3b8ff"
+              stroke="none"
+            />
+          </g>
         </g>
+
+        {/* --- 头 --- */}
+        <path
+          d="M36,50 C36,30 46,20 60,20 C74,20 84,30 84,50 C84,64 76,72 60,72 C44,72 36,64 36,50 Z"
+          fill="#f5cba0"
+        />
+        {/* 头发：圆顶 + 斜碎刘海（左长右短，右段收窄避眼）+ 两侧鬓角 */}
+        <path
+          d="M35,52 C33,32 44,17 60,17 C76,17 87,32 85,52 C83,45 80,41 76,39 C76,42.5 75,44.5 73,45.5 C71.5,41.5 68.5,38.5 64.5,37.5 C60,39.5 55.5,39.5 51.5,41.5 C47.5,43.5 43.8,46.5 42,51 C41,53.5 40,54 39,53 C38,52 36,52 35,52 Z"
+          fill="#2b2b33"
+          stroke="none"
+        />
+        <path d="M36,50 C36,34 46,22 60,22" stroke="#3d3d4a" strokeWidth={2} fill="none" />
+        {/* 下巴底阴影（平涂色块） */}
+        <path d="M48,68 C52,71 68,71 72,68 C68,70 52,70 48,68 Z" fill="#e8b28c" stroke="none" />
+
+        {/* 五官：短粗眉 / 大椭圆眼双高光 / 小鼻 / 微笑 / 腮红 */}
+        <path d="M45,45 q5,-3.5 10,0" strokeWidth={2} fill="none" />
+        <path d="M65,45 q5,-3.5 10,0" strokeWidth={2} fill="none" />
+        <g className="vox-eye group-hover:hidden">
+          <ellipse cx="51" cy="52" rx="3.6" ry="4.6" fill="#3d2b23" stroke="none" />
+          <circle cx="52.3" cy="50" r={1.9} fill="#ffffff" stroke="none" />
+          <circle cx="49.6" cy="54.4" r={1.1} fill="#ffffff" opacity={0.85} stroke="none" />
+        </g>
+        <g className="vox-eye group-hover:hidden">
+          <ellipse cx="71" cy="52" rx="3.6" ry="4.6" fill="#3d2b23" stroke="none" />
+          <circle cx="72.3" cy="50" r={1.9} fill="#ffffff" stroke="none" />
+          <circle cx="69.6" cy="54.4" r={1.1} fill="#ffffff" opacity={0.85} stroke="none" />
+        </g>
+        {/* 悬停开心眼（弯月 ^ ^，配合悬浮球 group-hover 切换） */}
+        <path d="M47.5,53 q3.5,-4 7,0" className="hidden group-hover:block" stroke="#3d2b23" strokeWidth={2.2} fill="none" />
+        <path d="M67.5,53 q3.5,-4 7,0" className="hidden group-hover:block" stroke="#3d2b23" strokeWidth={2.2} fill="none" />
+        <path d="M59,58.5 q1.2,1.4 2.4,0" strokeWidth={1.4} fill="none" />
+        <path d="M55.5,63 q4.5,3.6 9,0" stroke="#7a4a3a" strokeWidth={1.8} fill="none" />
+        <ellipse cx="43.5" cy="59.5" rx="3.4" ry="2" fill="#f5a98c" className="group-hover:opacity-95" opacity={0.65} stroke="none" />
+        <ellipse cx="78.5" cy="59.5" rx="3.4" ry="2" fill="#f5a98c" className="group-hover:opacity-95" opacity={0.65} stroke="none" />
       </g>
     </svg>
   );
