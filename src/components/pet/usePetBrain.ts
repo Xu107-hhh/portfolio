@@ -7,35 +7,24 @@ import { PET_BOX } from "./petFrames";
 /* ------------------------------------------------------------------ *
  * 参数
  * ------------------------------------------------------------------ *
- * 与调参台 pet-lab/prototype/pet-engine.js 的 PARAMS 保持一致。
- * 改这里的同时请改那边，否则两套实现的行为会慢慢分叉。
+ * 交互契约（用户定版）：小人常驻右下角，不自主漫游；
+ * 拖到哪儿就停在哪儿（视口内自由固定），点击唤起知识库问答。
+ * 动作表现 = 豆包 7 帧立绘（见 petFrames.ts），由问答阶段 + 轻量小动作驱动。
  */
 export const PET_PARAMS = {
   /** 一个像素渲染成多少 CSS px */
   scale: 2.5,
   scaleMobile: 2.05,
-  /** 距视口左右边缘的安全边距 / 距底部高度 */
+  /** 距视口左右边缘的安全边距 / 常驻右下角时距底边的高度 */
   margin: 14,
-  floorGap: 12,
+  bottomGap: 12,
 
-  /** 走路速度；挪到问答面板旁边时用小跑 */
-  walkSpeed: 54,
-  runSpeed: 210,
-  /** 闲置多久开始漫游（随机区间，ms） */
-  wanderAfter: [7000, 16000] as [number, number],
-  /** 到达目标后停多久 */
-  wanderPause: [1100, 2800] as [number, number],
   /** 闲置多久冒一个随机小动作 */
   actionAfter: [9000, 22000] as [number, number],
   /** 闲置多久打盹 */
   sleepAfter: 75000,
   /** 主动搭话间隔 */
   bubbleAfter: [32000, 70000] as [number, number],
-
-  /** 自由落体 */
-  gravity: 1900,
-  bounce: 0.42,
-  bounceStop: 240,
 
   /** 鼠标靠近多少 px 内抬头打招呼 */
   notice: 130,
@@ -45,17 +34,17 @@ export const PET_PARAMS = {
   /** 鼠标横向偏离多少 px 才扭头 */
   gazeDeadzone: 26,
 
-  /** 闲置时随机播放的动作池 */
-  idleActions: ["wave", "cheer", "thumb", "think", "hmm", "idea", "sip", "focus"] as PoseName[],
+  /** 闲置时随机播放的动作池（只保留映射到不同立绘帧的姿态） */
+  idleActions: ["wave", "cheer", "thumb", "think", "hmm", "idea", "focus"] as PoseName[],
   oneShotDuration: 2100,
 
-  /** 问答面板尺寸：用来把宠物挪到面板旁边，而不是被面板压住
+  /** 问答面板尺寸：打开面板时若宠物会被压住，就地挪到面板左侧
    *  gap = 面板右边距(24) + 面板与宠物之间留的空隙(4) */
   chatPanelWidth: 380,
   chatPanelGap: 28,
 } as const;
 
-export type PetMode = "idle" | "walk" | "drag" | "fall" | "sleep";
+export type PetMode = "idle" | "drag" | "sleep";
 
 export type PetBubble = {
   /** 气泡文案 */
@@ -71,12 +60,8 @@ export type PetBrainOptions = {
   onAsk: (question: string | null) => void;
   /** 问答面板是否打开 */
   chatOpen: boolean;
-  /** 是否允许自主漫游（用户可在菜单里关掉） */
-  roam: boolean;
   /** 是否尊重「减少动态效果」系统偏好（默认 true） */
   respectReducedMotion?: boolean;
-  /** 首次出现时从屏幕上方掉下来弹一下（整页加载才播一次，路由切换不重播） */
-  enterWithDrop?: boolean;
   scale?: number;
 };
 
@@ -88,10 +73,6 @@ type Sim = {
   facing: 1 | -1;
   x: number;
   y: number;
-  vx: number;
-  vy: number;
-  targetX: number | null;
-  nextWanderAt: number;
   nextActionAt: number;
   lastActivity: number;
   lastNotice: number;
@@ -106,7 +87,6 @@ type Sim = {
   px: number;
   py: number;
   hovered: boolean;
-  running: boolean;
   reduced: boolean;
 };
 
@@ -115,10 +95,6 @@ const initialSim = (): Sim => ({
   facing: 1,
   x: 0,
   y: 0,
-  vx: 0,
-  vy: 0,
-  targetX: null,
-  nextWanderAt: 0,
   nextActionAt: 0,
   lastActivity: 0,
   lastNotice: -Infinity,
@@ -133,24 +109,22 @@ const initialSim = (): Sim => ({
   px: -9999,
   py: -9999,
   hovered: false,
-  running: false,
   reduced: false,
 });
 
 /**
- * 桌面宠物行为引擎。
+ * 桌面宠物行为引擎（常驻版）。
  *
- * 状态迁移表（与 pet-lab 调参台保持同一份契约）：
+ * 状态迁移表：
  *
- *   tick  + idle + 闲置 > wanderAfter        → walk（随机挑一个目标点）
- *   tick  + walk + 到达目标点                 → idle
- *   tick  + idle + 闲置 > sleepAfter         → sleep
- *   any   + 鼠标/触摸活动                     → idle（唤醒并挥下手）
- *   down                                      → drag
- *   drag  + up（位移 ≥ dragSlop）             → fall（交给重力，落地弹一下）
- *   drag  + up（位移 <  dragSlop）            → chat（唤起知识库问答）
- *   chat  + 面板关闭                          → idle
- *   hover + 首次进入                          → wave（带冷却，避免反复打扰）
+ *   tick  + idle + 闲置 > sleepAfter   → sleep
+ *   tick  + idle + 闲置 > actionAfter  → 播一个随机小动作（原地，不挪位）
+ *   any   + 鼠标/触摸活动              → idle（唤醒并挥下手）
+ *   down                               → drag
+ *   drag  + up（位移 ≥ dragSlop）      → idle（停在松手处，视口内自由固定）
+ *   drag  + up（位移 <  dragSlop）     → chat（唤起知识库问答）
+ *   chat  + 面板关闭                   → idle
+ *   hover + 首次进入                   → wave（带冷却，避免反复打扰）
  *
  * 位置每帧直接写 element.style.transform（不走 React state），
  * 只有「姿态 / 模式 / 朝向 / 气泡」这类离散变化才触发重渲染。
@@ -158,9 +132,7 @@ const initialSim = (): Sim => ({
 export function usePetBrain({
   onAsk,
   chatOpen,
-  roam,
   respectReducedMotion = true,
-  enterWithDrop = true,
   scale = PET_PARAMS.scale,
 }: PetBrainOptions) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -171,28 +143,31 @@ export function usePetBrain({
   const [mode, setMode] = useState<PetMode>("idle");
   const [facing, setFacing] = useState<1 | -1>(1);
   const [anchor, setAnchor] = useState<"left" | "right">("right");
-  const [running, setRunning] = useState(false);
   const [ready, setReady] = useState(false);
   const [bubble, setBubble] = useState<PetBubble | null>(null);
 
   const sim = useRef<Sim>(initialSim());
-  const cfg = useRef({ onAsk, chatOpen, roam, scale, respectReducedMotion });
+  const cfg = useRef({ onAsk, chatOpen, scale, respectReducedMotion });
   const poseRef = useRef<PoseName>("idle");
+  const facingRef = useRef<1 | -1>(1);
   const rafRef = useRef(0);
   const bubbleTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  cfg.current = { onAsk, chatOpen, roam, scale, respectReducedMotion };
+  cfg.current = { onAsk, chatOpen, scale, respectReducedMotion };
 
-  /* ---------------- 尺寸与地面 ---------------- */
+  /* ---------------- 尺寸与活动范围 ---------------- */
   const pxW = () => PET_BOX.w * cfg.current.scale;
   const pxH = () => PET_BOX.h * cfg.current.scale;
   const vw = () => window.innerWidth;
   const vh = () => window.innerHeight;
-  const floorY = () => vh() - pxH() - PET_PARAMS.floorGap;
+  /** 常驻位（右下角） */
+  const homeX = () => Math.max(PET_PARAMS.margin, vw() - pxW() - PET_PARAMS.margin);
+  const homeY = () => vh() - pxH() - PET_PARAMS.bottomGap;
+  /** 拖拽落点允许的完整范围：整个视口内自由固定 */
   const maxX = () => Math.max(PET_PARAMS.margin, vw() - pxW() - PET_PARAMS.margin);
+  const maxY = () => Math.max(0, vh() - pxH() - 2);
 
   /* ---------------- 朝向同步（只在变化时 setState） ---------------- */
-  const facingRef = useRef<1 | -1>(1);
   const applyFacing = useCallback((f: 1 | -1) => {
     if (facingRef.current === f) return;
     facingRef.current = f;
@@ -234,9 +209,8 @@ export function usePetBrain({
     if (s.oneShot) return s.oneShot;
     if (s.mode === "sleep") return "sleep";
     if (s.mode === "drag") return "cheer";
-    // 面板开着时保持「听你说」，即使正在挪到面板旁边（此时腿仍在走）
+    // 面板开着时保持「听你说」
     if (cfg.current.chatOpen) return "listen";
-    if (s.mode === "walk") return "walk";
     return "idle";
   }, []);
 
@@ -253,22 +227,13 @@ export function usePetBrain({
     [setPoseSafe]
   );
 
-  /* ---------------- 放置 ---------------- */
+  /* ---------------- 落位：停在哪就写哪，视口内即合法 ---------------- */
   const place = useCallback(() => {
     const el = rootRef.current;
     const s = sim.current;
     if (!el) return;
     el.style.transform = `translate3d(${Math.round(s.x)}px, ${Math.round(s.y)}px, 0)`;
-
-    // 影子留在地面上：位置随「离地高度」偏移，透明度与宽度随高度收缩
-    const sh = shadowRef.current;
-    if (sh) {
-      const air = clamp((floorY() - s.y) / 260, 0, 1);
-      sh.style.top = `${floorY() - s.y - 4}px`;
-      sh.style.opacity = String(0.42 * (1 - air * 0.75));
-      sh.style.transform = `translateX(-50%) scaleX(${(1 - air * 0.45).toFixed(3)})`;
-    }
-    // 气泡贴边方向：靠右时向左展开，避免溢出视口
+    // 气泡/菜单贴边方向：靠右时向左展开，避免溢出视口
     setAnchor(s.x + pxW() / 2 > vw() / 2 ? "right" : "left");
   }, []);
 
@@ -294,137 +259,46 @@ export function usePetBrain({
       typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     s.mode = "idle";
-    s.x = maxX();
-    s.y = floorY();
+    s.x = homeX();
+    s.y = homeY();
     const t0 = performance.now();
     s.lastActivity = t0;
-    s.nextWanderAt = t0 + 3600;
     s.nextActionAt = t0 + rand(PET_PARAMS.actionAfter);
-    if (enterWithDrop && !s.reduced) {
-      // 从屏幕上方落下来，落地弹一下——「宠物到岗」的入场
-      s.y = -pxH() - 24;
-      s.vy = 150;
-      s.mode = "fall";
-      setMode("fall");
-    }
     place();
     setReady(true);
 
-    let last = 0;
-
     const step = (now: number) => {
-      const dt = last ? Math.min(0.05, (now - last) / 1000) : 0;
-      last = now;
-
       // 单次动作到期回落
       if (s.oneShot && now > s.oneShotUntil) {
         s.oneShot = null;
         syncPose();
       }
 
-      switch (s.mode) {
-        case "drag": {
-          s.x = clamp(s.px - s.dragOffX, -pxW() * 0.25, vw() - pxW() * 0.75);
-          s.y = clamp(s.py - s.dragOffY, 0, vh() - pxH() * 0.5);
-          break;
+      if (s.mode === "drag") {
+        s.x = clamp(s.px - s.dragOffX, -pxW() * 0.25, vw() - pxW() * 0.75);
+        s.y = clamp(s.py - s.dragOffY, 0, vh() - pxH() * 0.5);
+      } else if (s.mode === "idle") {
+        // 打盹
+        if (!s.oneShot && !s.reduced && !s.hovered && !cfg.current.chatOpen &&
+            now - s.lastActivity > PET_PARAMS.sleepAfter) {
+          s.mode = "sleep";
+          setMode("sleep");
+          syncPose();
+          say("我先眯一会儿，有事点我～", { ms: 4200 });
         }
-        case "fall": {
-          s.vy += PET_PARAMS.gravity * dt;
-          s.y += s.vy * dt;
-          s.x += s.vx * dt;
-          s.vx *= 0.985;
-          const fy = floorY();
-          if (s.y >= fy) {
-            s.y = fy;
-            if (Math.abs(s.vy) > PET_PARAMS.bounceStop) {
-              s.vy = -s.vy * PET_PARAMS.bounce;
-              el.classList.remove("pet-landed");
-              // 强制重启动画，否则连续两次落地看不出挤压
-              void el.offsetWidth;
-              el.classList.add("pet-landed");
-            } else {
-              s.vy = 0;
-              s.vx = 0;
-              s.mode = "idle";
-              setMode("idle");
-              poseOnce("cheer", 1200);
-              s.nextWanderAt = now + 1600;
-            }
-          }
-          if (s.x <= PET_PARAMS.margin || s.x >= maxX()) {
-            s.x = clamp(s.x, PET_PARAMS.margin, maxX());
-            s.vx = 0;
-          }
-          break;
-        }
-        case "walk": {
-          if (s.targetX === null) break;
-          const d = s.targetX - s.x;
-          if (Math.abs(d) < 3) {
-            s.x = s.targetX;
-            s.targetX = null;
-            s.running = false;
-            setRunning(false);
-            s.mode = "idle";
-            setMode("idle");
-            syncPose();
-            if (!cfg.current.chatOpen) s.nextWanderAt = now + rand(PET_PARAMS.wanderPause);
-          } else {
-            const dir: 1 | -1 = d > 0 ? 1 : -1;
-            applyFacing(dir);
-            s.x += dir * (s.running ? PET_PARAMS.runSpeed : PET_PARAMS.walkSpeed) * dt;
-          }
-          break;
-        }
-        default: {
-          if (s.targetX === null && now > s.nextWanderAt) {
-            if (s.mode === "idle" && !s.reduced && cfg.current.roam && !s.hovered && !cfg.current.chatOpen) {
-              const hi = maxX();
-              let t = PET_PARAMS.margin + Math.random() * (hi - PET_PARAMS.margin);
-              if (Math.abs(t - s.x) < 100) {
-                t = clamp(s.x + (t >= s.x ? 170 : -170), PET_PARAMS.margin, hi);
-              }
-              s.targetX = t;
-              s.oneShot = null;
-              s.mode = "walk";
-              setMode("walk");
-              syncPose();
-            } else {
-              s.nextWanderAt = now + 4000;
-            }
-          }
-          break;
-        }
-      }
 
-      // 打盹
-      if (
-        s.mode === "idle" &&
-        !s.oneShot &&
-        !s.reduced &&
-        !s.hovered &&
-        !cfg.current.chatOpen &&
-        now - s.lastActivity > PET_PARAMS.sleepAfter
-      ) {
-        s.mode = "sleep";
-        setMode("sleep");
-        s.targetX = null;
-        s.nextWanderAt = now + 5000;
-        syncPose();
-        say("我先眯一会儿，有事点我～", { ms: 4200 });
-      }
+        // 随机小动作（原地换表情，不挪位）
+        if (s.mode === "idle" && !s.oneShot && !s.reduced && !s.hovered && now > s.nextActionAt) {
+          const list = PET_PARAMS.idleActions;
+          poseOnce(list[Math.floor(Math.random() * list.length)], PET_PARAMS.oneShotDuration);
+          s.nextActionAt = now + rand(PET_PARAMS.actionAfter);
+        }
 
-      // 随机小动作
-      if (s.mode === "idle" && !s.oneShot && !s.reduced && !s.hovered && now > s.nextActionAt) {
-        const list = PET_PARAMS.idleActions;
-        poseOnce(list[Math.floor(Math.random() * list.length)], PET_PARAMS.oneShotDuration);
-        s.nextActionAt = now + rand(PET_PARAMS.actionAfter);
-      }
-
-      // 扭头看光标
-      if (s.mode === "idle" && !s.oneShot && !s.dragging) {
-        const dx = s.px - (s.x + pxW() / 2);
-        if (Math.abs(dx) > PET_PARAMS.gazeDeadzone) applyFacing(dx > 0 ? 1 : -1);
+        // 扭头看光标
+        if (!s.oneShot && !s.dragging) {
+          const dx = s.px - (s.x + pxW() / 2);
+          if (Math.abs(dx) > PET_PARAMS.gazeDeadzone) applyFacing(dx > 0 ? 1 : -1);
+        }
       }
 
       place();
@@ -433,7 +307,7 @@ export function usePetBrain({
 
     rafRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(rafRef.current);
-  }, [applyFacing, place, poseOnce, say, syncPose, respectReducedMotion, enterWithDrop]);
+  }, [applyFacing, place, poseOnce, say, syncPose, respectReducedMotion]);
 
   /* ---------------- 指针 / 键盘 ---------------- */
   const onPointerDown = useCallback((e: React.PointerEvent) => {
@@ -450,6 +324,17 @@ export function usePetBrain({
     (e.currentTarget as Element).setPointerCapture?.(e.pointerId);
   }, [activity]);
 
+  /** 拖完落定：就地固定，不回弹、不下坠 */
+  const settle = useCallback(() => {
+    const s = sim.current;
+    s.x = clamp(s.x, PET_PARAMS.margin, maxX());
+    s.y = clamp(s.y, 0, maxY());
+    s.mode = "idle";
+    setMode("idle");
+    syncPose();
+    place();
+  }, [place, syncPose]);
+
   const onPointerUp = useCallback((e: React.PointerEvent) => {
     const s = sim.current;
     if (!s.dragging) return;
@@ -460,10 +345,7 @@ export function usePetBrain({
       /* 指针已释放，忽略 */
     }
     if (s.dragMoved >= PET_PARAMS.dragSlop) {
-      s.mode = "fall";
-      setMode("fall");
-      s.vx = 0;
-      s.vy = Math.max(s.vy, 40);
+      settle();
     } else {
       s.mode = "idle";
       setMode("idle");
@@ -471,7 +353,7 @@ export function usePetBrain({
       // 位移够小 = 单击 → 唤起知识库问答
       cfg.current.onAsk(null);
     }
-  }, [syncPose]);
+  }, [settle, syncPose]);
 
   const onPointerEnter = useCallback(() => {
     const s = sim.current;
@@ -496,6 +378,13 @@ export function usePetBrain({
           setMode("drag");
           hideBubble();
         }
+        // 位置在事件里就地更新，不等下一帧 rAF——
+        // 否则快速连发的 down→move→up 会在一帧内完成，松手时 settle 拿到的还是旧位置
+        if (s.mode === "drag") {
+          s.x = clamp(s.px - s.dragOffX, -pxW() * 0.25, vw() - pxW() * 0.75);
+          s.y = clamp(s.py - s.dragOffY, 0, vh() - pxH() * 0.5);
+          place();
+        }
         return;
       }
       const cx = s.x + pxW() / 2;
@@ -512,25 +401,21 @@ export function usePetBrain({
       }
     };
     const up = () => {
-      // 指针在宠物外松开：兜底，避免卡在拖拽态
+      // 指针在宠物外松开：兜底落定，避免卡在拖拽态
       const s = sim.current;
       if (s.dragging) {
         s.dragging = false;
-        if (s.mode === "drag") {
-          s.mode = "fall";
-          setMode("fall");
-          s.vx = 0;
-        }
+        if (s.mode === "drag") settle();
       }
     };
     const resize = () => {
       const s = sim.current;
-      const fy = floorY();
-      if (s.mode !== "drag" && s.mode !== "fall") s.y = fy;
-      else s.y = Math.min(s.y, fy);
-      s.x = clamp(s.x, PET_PARAMS.margin, maxX());
-      if (s.targetX !== null) s.targetX = clamp(s.targetX, PET_PARAMS.margin, maxX());
-      place();
+      // 窗口变化只做越界回收，不改变用户「拖哪停哪」的位置
+      if (s.mode !== "drag") {
+        s.x = clamp(s.x, PET_PARAMS.margin, maxX());
+        s.y = clamp(s.y, 0, maxY());
+        place();
+      }
     };
     window.addEventListener("pointermove", move, { passive: true });
     window.addEventListener("pointerup", up);
@@ -542,69 +427,40 @@ export function usePetBrain({
       window.removeEventListener("pointercancel", up);
       window.removeEventListener("resize", resize);
     };
-  }, [hideBubble, place, poseOnce]);
+  }, [hideBubble, place, poseOnce, settle]);
 
   /* ---------------- 问答面板打开/关闭 ---------------- */
   useEffect(() => {
     const s = sim.current;
     if (chatOpen) {
-      // 站到面板左手边，别被面板压住
+      activity(); // 打盹中被叫起来
+      // 面板若会压住小人，就地平移到面板左侧（瞬移，不走动画）
       const panelW = Math.min(PET_PARAMS.chatPanelWidth, vw() - 32);
-      const tx = vw() - panelW - PET_PARAMS.chatPanelGap - pxW();
-      s.facing = 1; // 面朝右侧的面板
-      applyFacing(1);
-      s.oneShot = null;
-      if (tx >= PET_PARAMS.margin) {
-        const target = clamp(tx, PET_PARAMS.margin, maxX());
-        const dist = Math.abs(target - s.x);
-        s.targetX = target;
-        // 离得远就小跑过去，别让访客干等
-        s.running = dist > 120;
-        setRunning(s.running);
-        s.mode = dist > 6 ? "walk" : "idle";
-        setMode(s.mode);
-      } else {
-        s.targetX = null;
-        s.running = false;
-        setRunning(false);
-        s.mode = "idle";
-        setMode("idle");
+      const panelH = Math.min(560, vh() - 96);
+      const panelLeft = vw() - 24 - panelW;
+      const panelTop = vh() - 24 - panelH;
+      const overlaps = s.x + pxW() > panelLeft - 4 && s.y + pxH() > panelTop - 4;
+      if (overlaps) {
+        s.x = clamp(panelLeft - pxW() - 4, PET_PARAMS.margin, maxX());
+        applyFacing(1); // 面朝右侧的面板
       }
-      syncPose();
-      hideBubble();
-    } else if (s.mode === "walk" || s.mode === "idle") {
-      s.targetX = null;
-      s.running = false;
-      setRunning(false);
+      s.oneShot = null;
       s.mode = "idle";
       setMode("idle");
       syncPose();
-      s.lastActivity = performance.now();
-      s.nextWanderAt = performance.now() + 2600;
-    }
-  }, [chatOpen, applyFacing, hideBubble, syncPose]);
-
-  /* ---------------- 收起/展开漫游 ---------------- */
-  useEffect(() => {
-    if (!roam) {
-      sim.current.targetX = null;
-      sim.current.running = false;
-      setRunning(false);
+      place();
+      hideBubble();
     } else {
-      sim.current.nextWanderAt = performance.now() + 1200;
+      s.lastActivity = performance.now();
+      if (s.mode === "idle") syncPose();
     }
-  }, [roam]);
+  }, [chatOpen, activity, applyFacing, hideBubble, place, syncPose]);
 
   /* ---------------- 对外 ---------------- */
   const resetPosition = useCallback(() => {
     const s = sim.current;
-    s.x = maxX();
-    s.y = floorY();
-    s.targetX = null;
-    s.vy = 0;
-    s.vx = 0;
-    s.running = false;
-    setRunning(false);
+    s.x = homeX();
+    s.y = homeY();
     s.mode = "idle";
     setMode("idle");
     s.lastActivity = performance.now();
@@ -628,7 +484,6 @@ export function usePetBrain({
     mode,
     facing,
     anchor,
-    running,
     ready,
     bubble,
     say,
