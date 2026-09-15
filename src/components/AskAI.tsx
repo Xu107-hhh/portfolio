@@ -17,6 +17,10 @@ const QUICK_PROMPTS = [
   "他的技术栈和求职方向？",
 ];
 
+// 聊天后端：EdgeOne 边缘函数路由修复前走 CloudBase 云函数（同口径、同密钥）
+// EdgeOne 修复后改回 "/api/chat" 即可（cloud-functions 同款代码已就绪于仓库）
+const CHAT_API = "https://xu-d9gozqmzc1ff7c219.service.tcloudbase.com/api/chat";
+
 export default function AskAI() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -46,13 +50,21 @@ export default function AskAI() {
     setInput("");
     setLoading(true);
     try {
-      const res = await fetch("/api/chat", {
+      const res = await fetch(CHAT_API, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ messages: next }),
       });
       if (!res.ok || !res.body) throw new Error(String(res.status));
-      const reader = res.body.getReader();
+      const ct = res.headers.get("content-type") || "";
+      if (ct.includes("application/json")) {
+        // 非流式（CloudBase 备用后端）：整段返回
+        const data = await res.json();
+        const text = data?.reply ?? data?.choices?.[0]?.message?.content ?? "";
+        if (!text) throw new Error("empty");
+        updateLast(text);
+      } else {
+        const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buf = "";
       for (;;) {
@@ -74,6 +86,7 @@ export default function AskAI() {
             }
           }
         }
+      }
       }
     } catch {
       setMessages((m) => {
