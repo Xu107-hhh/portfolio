@@ -222,7 +222,7 @@ export const CASE_STUDIES: CaseStudy[] = [
       "与数学 / 生物 / 文科 / 剪辑 4 类业务方代表深度对齐需求，输出项目主线、阶段 spec、技术附录与离职交接文档等完整 PM 文档",
     ],
     impact: [
-      { value: "11 项", label: "工具与作品 · 多款进真实生产" },
+      { value: "11 项", label: "工具与作品 · 4 款进真实生产" },
       { value: "30-60→20-30 min", label: "单剧本剪辑处理" },
       { value: "30→3~5 min", label: "单剧本资料整理" },
       { value: "10 人", label: "剪辑处理并行自助化" },
