@@ -4,12 +4,14 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
 
 // 验收单：全站唯一的大动效。行入场 → 印章落下。
-// 四行按 AI PM 能力项对表组织，数字口径与 constants.ts 白名单一致，增删须同步。
+// 四行按 AI PM 能力项对表组织，数字全部对齐简历口径权威（9.3/9.11 定稿）：
+// 3 大主环节/11 项=矩阵条规模词；13+ 款=作品集具名化口径（Seedream/Seedance 系列、海螺等）；
+// 近 8 万条=听写判错（必须带"近"）。89% 同事跑通=已清除数字（说不出计算过程），严禁再上墙。
 const ROWS = [
   { no: "01", name: "需求拆解", desc: "场景 → 流程 → 指标", value: "3 大主环节" },
   { no: "02", name: "模型评测", desc: "横评 + 对照测试", value: "13+ 款" },
-  { no: "03", name: "数据决策", desc: "归因 → 分级建议", value: "8 万条" },
-  { no: "04", name: "落地采纳", desc: "进生产 / 跑通", value: "11 项 · 89%" },
+  { no: "03", name: "数据决策", desc: "归因 → 分级建议", value: "近 8 万条" },
+  { no: "04", name: "落地采纳", desc: "推动进入真实生产", value: "11 项" },
 ];
 
 export default function AcceptanceCard() {
