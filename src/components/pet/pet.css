@@ -217,11 +217,13 @@
 .pet-root.is-failed .pet-breathe {
   animation: pet-fail-wobble 0.55s ease-in-out infinite;
 }
-/* 地面投影：深色底上纯黑看不见，所以补一圈很淡的蓝晕，
+/* 地面投影：固定在小人脚下（常驻版没有空中态，不再跟随离地高度偏移）。
+   深色底上纯黑看不见，所以补一圈很淡的蓝晕，
    让「贴地感」在墨底与纸面两种背景上都成立 */
 .pet-shadow {
   position: absolute;
   left: 50%;
+  bottom: 1px;
   width: 58%;
   height: 7px;
   border-radius: 50%;

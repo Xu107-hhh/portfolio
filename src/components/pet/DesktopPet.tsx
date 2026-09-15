@@ -17,7 +17,6 @@ import {
 import { POSE_LABELS, pickGuidedLine, pickLine } from "./petLines";
 
 const LS_HIDDEN = "pet:hidden";
-const LS_ROAM = "pet:roam";
 
 type MenuKind = "root" | "poses" | null;
 
@@ -28,7 +27,6 @@ export default function DesktopPet() {
   const [seed, setSeed] = useState<SeedQuestion>(null);
   const [scale, setScale] = useState<number>(PET_PARAMS.scale);
   const [hidden, setHidden] = useState(false);
-  const [roam, setRoam] = useState(true);
   const [menu, setMenu] = useState<MenuKind>(null);
   const [prefsReady, setPrefsReady] = useState(false);
 
@@ -39,12 +37,10 @@ export default function DesktopPet() {
   /** 长按唤出菜单后，紧接着的 pointerup 不要被当成「单击提问」 */
   const suppressAskUntil = useRef(0);
 
-  /* ---------------- 偏好（记住「让它歇着」和「别乱跑」） ---------------- */
+  /* ---------------- 偏好（记住「让它歇着」） ---------------- */
   useEffect(() => {
     try {
       setHidden(localStorage.getItem(LS_HIDDEN) === "1");
-      const r = localStorage.getItem(LS_ROAM);
-      if (r !== null) setRoam(r === "1");
     } catch {
       /* 隐私模式下拿不到 localStorage，用默认值 */
     }
@@ -55,11 +51,10 @@ export default function DesktopPet() {
     if (!prefsReady) return;
     try {
       localStorage.setItem(LS_HIDDEN, hidden ? "1" : "0");
-      localStorage.setItem(LS_ROAM, roam ? "1" : "0");
     } catch {
       /* 忽略写入失败 */
     }
-  }, [hidden, roam, prefsReady]);
+  }, [hidden, prefsReady]);
 
   /* ---------------- 尺寸随视口调整 ---------------- */
   useEffect(() => {
@@ -81,16 +76,9 @@ export default function DesktopPet() {
     }
   }, []);
 
-  const pet = usePetBrain({
-    onAsk: handleAsk,
-    chatOpen,
-    roam,
-    scale,
-    // 「先休息吧」把它收起来时不播入场动画，免得一展开又掉一次
-    enterWithDrop: !hidden && prefsReady,
-  });
+  const pet = usePetBrain({ onAsk: handleAsk, chatOpen, scale });
 
-  const { say, hideBubble, bubble, pose, mode, facing, anchor, running, ready, resetPosition, poseOnce } = pet;
+  const { say, hideBubble, bubble, pose, mode, facing, anchor, ready, resetPosition, poseOnce } = pet;
 
   /* 预载小鑫全部帧，状态切换不闪图 */
   useEffect(() => {
@@ -206,10 +194,7 @@ export default function DesktopPet() {
   const cls = [
     "pet-root",
     ready && !hidden ? "is-ready" : "is-hidden",
-    mode === "walk" ? "is-walking" : "",
-    running ? "is-running" : "",
     mode === "drag" ? "is-dragging" : "",
-    mode === "fall" ? "is-airborne" : "",
     mode === "sleep" ? "is-sleeping" : "",
     chatOpen ? "is-chatting" : "",
     frame === "done" ? "is-done" : "",
@@ -317,18 +302,14 @@ export default function DesktopPet() {
                 <button type="button" role="menuitem" onClick={() => act("wave")}>
                   打个招呼
                 </button>
-                <button type="button" role="menuitem" onClick={() => setMenu("poses")}>
-                  换表情 →
-                </button>
                 <button
                   type="button"
                   role="menuitem"
                   onClick={() => {
-                    setRoam((v) => !v);
-                    setMenu(null);
+                    setMenu("poses");
                   }}
                 >
-                  {roam ? "别乱跑了" : "陪我走走"}
+                  换表情 →
                 </button>
                 <button
                   type="button"
