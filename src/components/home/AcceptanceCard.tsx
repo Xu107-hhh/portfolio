@@ -4,12 +4,12 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Check } from "lucide-react";
 
 // 验收单：全站唯一的大动效。行入场 → 印章落下。
-// 数字口径与首页证据条/精选案例严格一致，增删须同步 constants.ts。
+// 四行按 AI PM 能力项对表组织，数字口径与 constants.ts 白名单一致，增删须同步。
 const ROWS = [
-  { no: "01", label: "工具与作品进入真实生产", value: "11 项" },
-  { no: "02", label: "单剧本资料整理", value: "30 min → 3~5 min" },
-  { no: "03", label: "真实判错数据分析", value: "8 万条" },
-  { no: "04", label: "多智能体全球信息源", value: "136 个" },
+  { no: "01", name: "需求拆解", desc: "场景 → 流程 → 指标", value: "3 大主环节" },
+  { no: "02", name: "模型评测", desc: "横评 + 对照测试", value: "13+ 款" },
+  { no: "03", name: "数据决策", desc: "归因 → 分级建议", value: "8 万条" },
+  { no: "04", name: "落地采纳", desc: "进生产 / 跑通", value: "11 项 · 89%" },
 ];
 
 export default function AcceptanceCard() {
@@ -34,7 +34,7 @@ export default function AcceptanceCard() {
           </h3>
           <span className="font-mono text-[10px] text-paper-muted">NO. XLX-2027</span>
         </div>
-        <p className="mt-1.5 text-xs text-paper-muted">AI 产品能力 · 许隆鑫</p>
+        <p className="mt-1.5 text-xs text-paper-muted">AI 产品能力 · 证据清单</p>
 
         <div className="tear-line mt-5" />
 
@@ -57,7 +57,10 @@ export default function AcceptanceCard() {
               className="grid grid-cols-[30px_1fr_auto] items-baseline gap-2 py-2.5"
             >
               <span className="font-mono text-[10px] text-faint">{row.no}</span>
-              <span className="text-[13px] text-paper-muted">{row.label}</span>
+              <span className="text-[13px]">
+                <span className="font-medium text-ink">{row.name}</span>
+                <span className="text-paper-muted"> · {row.desc}</span>
+              </span>
               <span className="flex items-center gap-1.5 font-display text-sm font-bold">
                 <Check size={13} strokeWidth={3} className="text-accent" aria-hidden />
                 {row.value}
