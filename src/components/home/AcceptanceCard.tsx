@@ -20,7 +20,7 @@ const ROWS = [
   { no: "02", name: "模型评测", desc: "对照测试支撑选型", value: "6 组" },
   { no: "03", name: "数据决策", desc: "归因 → 分级建议", value: "近 8 万条" },
   { no: "04", name: "提效落地", desc: "单剧本资料整理", value: "30→3~5 min" },
-  { no: "05", name: "落地采纳", desc: "11 项工具与作品中进真实生产", value: "4 款" },
+  { no: "05", name: "落地采纳", desc: "11 项工具与作品沉淀", value: "4 款进生产" },
 ];
 
 export default function AcceptanceCard() {
