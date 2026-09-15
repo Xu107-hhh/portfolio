@@ -73,11 +73,13 @@ function resolveUpstreamUrl() {
   return u;
 }
 
-// 跨域白名单：仅作品集主站/镜像可调用
+// 跨域白名单：仅作品集主站/镜像可调用（localhost 仅供本地 dev 预览联调）
 const ALLOWED_ORIGINS = new Set([
   "https://xulongxin.cn",
   "https://www.xulongxin.cn",
   "https://xulongxin.netlify.app",
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
 ]);
 
 // 请求约束
