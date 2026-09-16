@@ -141,7 +141,7 @@ export const SKILLS = [
   },
   {
     category: "产品设计",
-    items: ["需求分析与 PRD", "业务流程拆解", "MVP 验证与路线图", "指标设计与复盘", "原型与流程图（墨刀 / XMind）", "用户研究"],
+    items: ["需求分析与 PRD", "业务流程拆解", "MVP 验证与路线图", "指标设计与复盘", "原型与流程图（墨刀 / Figma / XMind）", "用户研究"],
   },
   {
     category: "数据分析",
@@ -615,6 +615,7 @@ export const AWARDS = [
   { title: "河南省「挑战杯」", detail: "铜奖", year: "2023" },
   { title: "腾讯未来产品经理创造营", detail: "结课认证", year: "2024" },
   { title: "河南省三好学生", detail: "省级荣誉", year: "2024" },
+  { title: "河南省优秀毕业生", detail: "省级荣誉", year: "2024" },
   { title: "河南省「互联网+」二等奖", detail: "省级竞赛", year: "2023" },
   { title: "北斗星通企业奖学金", detail: "企业奖学金", year: "2023" },
 ];
