@@ -11,7 +11,7 @@
 | `/works` | 作品展示：3 个精选案例 + 其他项目卡片 |
 | `/works/[slug]` | 案例详情：问题定义、策略路径、工具矩阵、量化结果、技术栈、上下篇导航 |
 | `/gallery` | 图片库：12 张优化图片，分类筛选 + 键盘可导航灯箱预览 |
-| `/contact` | 联系页：联系卡片、社交链接（GitHub / Email / 电话 / 简历下载）、留言表单（mailto） |
+| `/contact` | 联系页：联系卡片、社交链接（GitHub / Email / 电话 / 简历下载）、留言表单（直发 CloudBase 云函数→飞书通知，失败自动降级 mailto） |
 
 全站细节：路由切换过渡动效（`template.tsx`）、自定义 404、回到顶部按钮、品牌 favicon（`icon.svg`）、
 SEO 基建（`sitemap.xml` / `robots.txt` / OG 分享卡 `opengraph-image.tsx` / Person JSON-LD）。
@@ -27,6 +27,19 @@ pnpm build  # 生产构建（静态导出到 out/）
 
 > 项目已配置 `output: "export"`，构建产物是纯静态文件；本地预览用 `pnpm dev`，
 > 或静态服务 `out/` 目录（如 `npx serve out`）。`pnpm start` 已不适用。
+
+## 部署拓扑（2026-09-16 起）
+
+| 链路 | 地址 | 更新方式 |
+| --- | --- | --- |
+| **主链** | **https://xulongxin.cn**（腾讯云 EdgeOne Pages，免备案，HTTPS） | push main 自动构建部署 |
+| 海外镜像 | https://xu107-hhh.github.io/portfolio/（GitHub Pages） | push main 自动（Actions） |
+| 国内保底镜像 | https://portfolio-xu-d9gozqmzc1ff7c219.webapps.tcloudbase.com（CloudBase） | 手动同步（见下节） |
+| 旧 Netlify 镜像 | https://xulongxin.netlify.app | 已停更（旧版内容，仅存档） |
+
+对外一律给**主链 https://xulongxin.cn**（简历、名片、投递附件均指此）。
+后端：Ask AI 问答与联系表单走腾讯云 CloudBase 云函数 + API 网关（`/api/chat`、`/api/contact`），
+与托管相互独立，换静态托管不影响这两个功能。
 
 ## 部署到 GitHub Pages
 
@@ -62,14 +75,14 @@ GitHub Pages 在大陆不挂代理难以访问，故在腾讯云 CloudBase 维�
      首次需 `npx -y @cloudbase/cli login` 登录一次腾讯云账号；若本机代理
      127.0.0.1:7892 未开导致 npx/tcb 联网失败，命令前加 `http_proxy= https_proxy=` 绕过。
 
-日常改站节奏：改 `src/lib/constants.ts` → push main（GitHub Pages 自动更新）→
-跑一次部署同步国内镜像（两条命令或一句话让 ZCode 干）。
+日常改站节奏：改 `src/lib/constants.ts` → push main（主链 EdgeOne + GitHub Pages 都自动更新）→
+需要时再手动同步 CloudBase 国内保底镜像（一条命令或一句话让 ZCode 干）。
 
-## Netlify 镜像（干净备用链，观察期）
+## Netlify 镜像（已停更，仅存档）
 
 **https://xulongxin.netlify.app** —— 子域名自选、**无中间页**、免费无到期问题；
-实测国内直连全路由 200（走 AWS 新加坡节点，1-2s）。当前处于**观察期**：
-netlify.app 历史上曾有过被间歇干扰的时期，稳定跑 1-2 周后可升为主链接。
+实测国内直连全路由 200（走 AWS 新加坡节点，1-2s）。曾处观察期，2026-09-14 起
+主链职责由 EdgeOne（**xulongxin.cn**）接手，此镜像停留在停更时的旧版内容，仅作存档。
 部署方式：`out/` 目录下 `npx -y netlify deploy --prod --dir=. --site 8ff36589-cc48-4607-9d22-b840e27fdd52`
 （须在仓库外的中性目录跑，否则 CLI 会从上层目录检测到 Next.js 强行走构建）；
 站点构建配置已通过 API 清空（纯静态资产模式）。账号：xu137（qq 邮箱）。
@@ -80,7 +93,7 @@ netlify.app 历史上曾有过被间歇干扰的时期，稳定跑 1-2 周后可
 同仓库另接了 Cloudflare Workers Builds（项目 `personal-website`，push main 自动构建），
 部署配置在本仓库 `wrangler.jsonc`（纯静态资产模式，不用 OpenNext 适配器）。
 ⚠️ 实测 workers.dev 域名在大陆被 DNS 污染（解析到 Facebook 段），**国内打不开**，
-此镜像仅作学习/海外备用，HR 链接请用上面的 CloudBase 地址。
+此镜像仅作学习/海外备用，HR 链接请用主链 https://xulongxin.cn 。
 
 ## 内容维护
 
