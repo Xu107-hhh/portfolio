@@ -63,6 +63,7 @@ export const EDUCATION = [
     degree: "硕士（应届生）",
     major: "情报学（信息资源管理 · 数据科学系 · 人工智能应用研究方向）",
     period: "2024.09 - 2027.07",
+    gpa: "3.8/4",
     courses:
       "大数据分析与数据挖掘、机器学习、信息分析工具、信息行为分析、竞争情报、信息系统开发方法",
     research:
@@ -100,7 +101,7 @@ export const EXPERIENCE = [
   },
   {
     company: "中国科学院武汉文献情报中心",
-    role: "科研项目助理",
+    role: "项目助理 · AI 方向",
     period: "2025.07 - 2026.01",
     details: [
       "大模型效果评测：以人工核查的全固态锂电池知识体系为基准，设计 6 组对照测试用例，完成磐石大模型 vs 通用模型（Kimi K2.0）的系统性评测，覆盖 Chat 模式与文献罗盘双模式，从准确性、深度、逻辑性、术语规范性四维输出结构化测评报告，支撑模型选型",
@@ -322,7 +323,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     title: "磐石行业大模型 vs 通用模型系统性评测",
     category: "LLM Evaluation",
     tagline: "全固态锂电池知识体系构建能力 · 6 组对照测试 · 结构化测评报告",
-    role: "科研项目助理 · 评测设计、执行与报告撰写",
+    role: "项目助理 · AI 方向 · 评测设计、执行与报告撰写",
     period: "2025.10",
     company: "中国科学院武汉文献情报中心",
     featured: true,
@@ -613,6 +614,7 @@ export const AWARDS = [
   { title: "河南省优秀毕业生", detail: "省级荣誉", year: "2024" },
   { title: "河南省「互联网+」二等奖", detail: "省级竞赛", year: "2023" },
   { title: "北斗星通企业奖学金", detail: "企业奖学金", year: "2023" },
+  { title: "Datawhale 认证", detail: "AI Coding Engineer · Agent Engineer", year: "2026" },
 ];
 
 // ----------------------------------------------------------------------------
