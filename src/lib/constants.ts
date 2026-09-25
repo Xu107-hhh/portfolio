@@ -614,7 +614,7 @@ export const AWARDS = [
   { title: "河南省优秀毕业生", detail: "省级荣誉", year: "2024" },
   { title: "河南省「互联网+」二等奖", detail: "省级竞赛", year: "2023" },
   { title: "北斗星通企业奖学金", detail: "企业奖学金", year: "2023" },
-  { title: "Datawhale 认证", detail: "AI Coding Engineer · Agent Engineer", year: "2026" },
+  { title: "Datawhale 认证", detail: "AI Coding Engineer · Agent Engineer", year: "2025" },
 ];
 
 // ----------------------------------------------------------------------------
