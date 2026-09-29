@@ -1,7 +1,10 @@
 // CloudBase HTTP 云函数：chat — 作品集 AI 问答代理（备用后端）
 // 背景：EdgeOne 边缘函数路由平台级 bug（自定义域名 404），先用 CloudBase 承接 /api/chat 流量；
 // EdgeOne 修复后前端一行可切回。口径与 edge-functions/api/chat.js 保持同步。
-// 密钥：函数环境变量 MAKERS_MODELS_KEY（控制台已配）。
+// 上游通道（环境变量可切换，无需改代码）：
+//   AI_BASE_URL / AI_MODEL / AI_API_KEY —— 默认阿里云百炼 compatible-mode（qwen3.8-flash）；
+//   2026-09-30 因 EdgeOne Makers 50 万 token/月免费额度耗尽（10-14 重置）切换；
+//   EdgeOne 密钥仍保留在函数 env MAKERS_MODELS_KEY，重置后改 AI_BASE_URL 即可切回。
 
 const SYSTEM_PROMPT = `你是部署在许隆鑫个人作品集网站上的 AI 助手，代表许隆鑫本人，回答招聘方（HR、面试官）与访客关于他背景的问题。用户可能是面试官，回答质量直接影响他的求职印象。
 
@@ -53,10 +56,11 @@ Prompt Engineering；AI Coding（Claude Code / Codex / Cursor）；Agent 开发�
 【荣誉】
 全国人工智能应用创新大赛国家三等奖（2025）；国家励志奖学金连续三年；河南省「挑战杯」铜奖；河南省「互联网+」二等奖；腾讯未来产品经理创造营结课认证；河南省三好学生；北斗星通企业奖学金`;
 
-// 出站目标固定为平台模型网关：https + 主机白名单 + 私网地址拦截，防 SSRF
-const GATEWAY_HOST_ALLOWLIST = new Set(["ai-gateway.edgeone.link"]);
-const GATEWAY_URL = "https://ai-gateway.edgeone.link/v1/chat/completions";
-const DEFAULT_MODEL = "@makers/deepseek-v4-flash";
+// 出站目标仅限白名单主机：https + 主机白名单 + 私网地址拦截，防 SSRF
+const GATEWAY_HOST_ALLOWLIST = new Set(["ai-gateway.edgeone.link", "dashscope.aliyuncs.com"]);
+const GATEWAY_URL =
+  process.env.AI_BASE_URL || "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions";
+const DEFAULT_MODEL = process.env.AI_MODEL || "qwen3.8-flash";
 
 const PRIVATE_HOST_PATTERNS = [
   /^localhost$/i, /^127\./, /^10\./, /^192\.168\./,
@@ -82,10 +86,10 @@ const ALLOWED_ORIGINS = new Set([
   "http://127.0.0.1:3000",
 ]);
 
-// 请求约束
+// 请求约束（qwen3.8 系列带思考链，输出预算需覆盖 reasoning_content，故比纯回答略宽）
 const MAX_TURNS = 8;
 const MAX_INPUT_CHARS = 800;
-const MAX_OUTPUT_TOKENS = 500;
+const MAX_OUTPUT_TOKENS = 1024;
 const DAILY_LIMIT_PER_IP = 30;
 const DAILY_LIMIT_GLOBAL = 300; // 无 IP 可用时全局兜底
 
@@ -141,7 +145,7 @@ exports.main = async function (event) {
   const origin = (event.headers && (event.headers.origin || event.headers.Origin)) || "";
   if (!ALLOWED_ORIGINS.has(origin)) return respond(event, 403, { error: { message: "Forbidden" } });
 
-  const apiKey = process.env.MAKERS_MODELS_KEY || "";
+  const apiKey = process.env.AI_API_KEY || process.env.MAKERS_MODELS_KEY || "";
   if (!apiKey) return respond(event, 503, { error: { message: "服务未配置，请稍后再试" } });
 
   let upstreamUrl;
@@ -172,7 +176,7 @@ exports.main = async function (event) {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: process.env.AI_MODEL || DEFAULT_MODEL,
+      model: DEFAULT_MODEL,
       stream: false,
       max_tokens: MAX_OUTPUT_TOKENS,
       temperature: 0.6,
