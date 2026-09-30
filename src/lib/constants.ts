@@ -82,6 +82,53 @@ export const EDUCATION = [
   },
 ];
 
+export interface Publication {
+  venueTag: string; // 期刊类型徽标（只用可查证的表述）
+  venue: string; // 完整刊源行：期刊名 + 卷期页码
+  year: string;
+  title: string; // 原文标题
+  titleGloss?: string; // 中文对照（英文论文用）
+  authors: { name: string; self?: boolean }[]; // 完整作者列表，self=许隆鑫本人
+  role: string; // 作者位次，如实标注
+  note: string; // 一句话研究内容
+  doi: string; // https://doi.org/... 原文可查证
+}
+
+export const PUBLICATIONS: Publication[] = [
+  {
+    venueTag: "国际期刊 · Open Access",
+    venue: "Journal of Data Science，第 24 卷第 1 期：254–260（Trustworthy Machine Learning 特刊）",
+    year: "2026",
+    title: "Addressing the Challenges of AI-Generated Assignment Submissions in Education: Insights and Strategies",
+    titleGloss: "AI 生成作业的教育评估挑战：洞察与策略",
+    authors: [
+      { name: "Shuyi Wang" },
+      { name: "Longxin Xu", self: true },
+      { name: "Junchen Liu" },
+      { name: "Yujia Zhai" },
+    ],
+    role: "第二作者",
+    note: "AI 检测工具不可靠、传统考核方式失灵——系统分析后提出兼顾学术诚信与 AI 融合的课程评估策略。",
+    doi: "https://doi.org/10.6339/25-JDS1208",
+  },
+  {
+    venueTag: "CSSCI 来源期刊",
+    venue: "《图书情报知识》，第 42 卷第 4 期（总第 226 期）：113–125",
+    year: "2025",
+    title: "生成式AI搜索引擎人机结合的选题思路拓展研究",
+    authors: [
+      { name: "王树义" },
+      { name: "曾雯" },
+      { name: "戚淇" },
+      { name: "许隆鑫", self: true },
+      { name: "岳芳" },
+    ],
+    role: "第四作者",
+    note: "提出基于生成式 AI 搜索引擎的科研选题工作流，实验+访谈验证「人在环中」的人机结合方式能有效拓展选题思路——被试满意度评分均在 90 分以上。",
+    doi: "https://doi.org/10.13366/j.dik.2025.04.113",
+  },
+];
+
 export const EXPERIENCE = [
   {
     company: "精准学",

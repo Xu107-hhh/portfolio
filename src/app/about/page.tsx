@@ -4,12 +4,12 @@ import { ArrowUpRight, GraduationCap, Trophy } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import Reveal from "@/components/Reveal";
 import FadeImage from "@/components/FadeImage";
-import { PERSONAL, ABOUT, EDUCATION, EXPERIENCE, SKILLS, AWARDS, METHODOLOGY } from "@/lib/constants";
+import { PERSONAL, ABOUT, EDUCATION, EXPERIENCE, SKILLS, AWARDS, METHODOLOGY, PUBLICATIONS } from "@/lib/constants";
 
 export const metadata: Metadata = {
   title: "关于我",
   description:
-    "许隆鑫 — AI 产品经理。情报学硕士（信息资源管理 · 数据科学系 · 人工智能应用研究方向），从模型评测到产品落地的完整实战经验，坚持五级证据分级与「先验证、再扩张」的工作纪律。",
+    "许隆鑫 — AI 产品经理。情报学硕士（信息资源管理 · 数据科学系 · 人工智能应用研究方向），从模型评测到产品落地的完整实战经验，合作发表 CSSCI 与国际期刊论文 2 篇，坚持五级证据分级与「先验证、再扩张」的工作纪律。",
 };
 
 export default function AboutPage() {
@@ -255,12 +255,74 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ---------- 技能 ---------- */}
+      {/* ---------- 学术发表 ---------- */}
       <section className="border-y border-line bg-surface">
         <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
           <Reveal>
             <p className="flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-faint">
               <span className="text-accent">05</span>
+              <span className="h-px w-10 bg-line" />
+              Publications
+            </p>
+            <h2 className="mt-4 font-display text-3xl font-bold md:text-4xl">学术发表</h2>
+            <p className="mt-4 max-w-2xl leading-relaxed text-muted">
+              研究主题与产品实践同源：让人在环中、让 AI 可验收。两篇论文均已正式发表，可经 DOI 查证原文。
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-6 md:grid-cols-2">
+            {PUBLICATIONS.map((pub, i) => (
+              <Reveal key={pub.doi} delay={i * 0.06}>
+                <article className="flex h-full flex-col border border-line bg-ink p-6 transition-colors hover:border-accent/40 md:p-8">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="border border-accent/40 px-2 py-0.5 font-display text-[10px] uppercase tracking-[0.15em] text-accent-soft">
+                      {pub.venueTag}
+                    </span>
+                    <span className="font-display text-xs text-faint">{pub.year}</span>
+                  </div>
+                  <h3 className="mt-4 font-display text-lg font-semibold leading-snug">
+                    {pub.title}
+                  </h3>
+                  {pub.titleGloss && (
+                    <p className="mt-1.5 text-sm text-accent-soft">{pub.titleGloss}</p>
+                  )}
+                  <p className="mt-3 text-xs leading-relaxed text-muted">
+                    {pub.authors.map((a, j) => (
+                      <span key={a.name}>
+                        {j > 0 && "、"}
+                        <span className={a.self ? "font-semibold text-ivory" : ""}>{a.name}</span>
+                      </span>
+                    ))}
+                    <span className="ml-2 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent">
+                      {pub.role}
+                    </span>
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-muted">{pub.note}</p>
+                  <div className="mt-5 flex flex-wrap items-end justify-between gap-3 border-t border-line pt-4 md:mt-auto">
+                    <p className="max-w-[70%] text-xs leading-relaxed text-faint">{pub.venue}</p>
+                    <a
+                      href={pub.doi}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group inline-flex items-center gap-1 border-b border-accent/50 pb-0.5 text-xs text-accent-soft transition-colors hover:border-accent"
+                    >
+                      查看原文（DOI）
+                      <ArrowUpRight size={12} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </a>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- 技能 ---------- */}
+      <section className="border-y border-line bg-surface">
+        <div className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
+          <Reveal>
+            <p className="flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-faint">
+              <span className="text-accent">06</span>
               <span className="h-px w-10 bg-line" />
               Skills
             </p>
@@ -300,7 +362,7 @@ export default function AboutPage() {
       <section className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">
         <Reveal>
           <p className="flex items-center gap-3 text-xs uppercase tracking-[0.25em] text-faint">
-            <span className="text-accent">06</span>
+            <span className="text-accent">07</span>
             <span className="h-px w-10 bg-line" />
             Honors
           </p>
