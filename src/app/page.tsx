@@ -32,7 +32,7 @@ export default function Home() {
             </Link>
           </div>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-paper-muted">
-            9 个案例按经历阶段分区：问题定义、策略路径与量化结果——数据永远落在决策上。
+            10 个案例按经历阶段分区：问题定义、策略路径与量化结果——数据永远落在决策上。
           </p>
 
           <div className="mt-12 grid gap-6 md:grid-cols-2">

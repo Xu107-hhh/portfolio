@@ -9,7 +9,7 @@ import { CASE_STUDIES, WORK_GROUPS } from "@/lib/constants";
 export const metadata: Metadata = {
   title: "作品展示",
   description:
-    "许隆鑫的作品集：AI 动画自动化生产提效、磐石大模型系统性评测、动力电池产业情报分析、SciAgent 多智能体系统、智慧试卷设计师（全国三等奖）等 9 个案例的完整拆解。",
+    "许隆鑫的作品集：AI 动画自动化生产提效、磐石大模型系统性评测、动力电池产业情报分析、SciAgent 多智能体系统、智慧试卷设计师（全国三等奖）等 10 个案例的完整拆解。",
 };
 
 export default function WorksPage() {
@@ -19,7 +19,7 @@ export default function WorksPage() {
         index="02"
         eyebrow="Selected Works"
         title="作品展示"
-        description="9 个案例按经历阶段分区呈现——实习交付、科研与情报、竞赛与课程、独立探索：问题定义、策略路径与量化结果，数据永远落在决策上。"
+        description="10 个案例按经历阶段分区呈现——实习交付、科研与情报、竞赛与课程、独立探索：问题定义、策略路径与量化结果，数据永远落在决策上。"
       />
 
       <section className="mx-auto max-w-6xl px-5 py-16 md:px-8 md:py-24">

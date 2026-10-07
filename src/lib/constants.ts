@@ -578,6 +578,43 @@ export const CASE_STUDIES: CaseStudy[] = [
     dataNote:
       "口径说明：个人探索项目，为门店场景设计并本地部署验证，未正式上线营业；页面中商品 / 评价 / 门店信息均为 README 占位替换表列明的示意数据，后台台账截图为脚本注入的模拟预约（姓名与手机号均为本地生成的模拟数据）。",
   },
+  {
+    slug: "site-ask-ai",
+    title: "Ask AI 数字分身｜个人网站智能问答",
+    category: "AI Product · Live",
+    tagline: "面向面试官的站内 AI 问答 · 线上生产运行",
+    role: "独立完成 · 产品 / 开发 / 知识库运营",
+    period: "2026.09 - 运行中",
+    company: "个人项目（本站）",
+    featured: false,
+    cover: "/images/gallery/real-askai-panel.png",
+    summary:
+      "部署在本站的 AI 问答：访客（HR、面试官）点开右下角桌宠「小鑫」即可询问我的经历——把教育、实习、案例、技能、荣誉整理成一份口径知识库全量注入 system prompt，配套拒答清单、防注入、限流与可切换后端，CloudBase 云函数承载线上流量。知识库项目的「生产运行版」。",
+    problem:
+      "招聘方对候选人背景的疑问高度重复且时效性强（简历一更新口径就变）；静态页面回答不了长尾问题，而通用大模型不了解本人事实，直接问只会得到编造的数字——需要一个「只说真话、不知道就说不知道」的站内问答。",
+    approach: [
+      "知识库设计：将教育 / 实习 / 案例 / 技能 / 荣誉整理为结构化口径知识库，全量注入 system prompt——知识库仅数千字，按规模选择「强约束生成」而非向量检索，从源头规避检索错误",
+      "生成治理三层：只依据知识库回答、禁止推算与合并出新数字；薪资期望、对前司与同事的评价、内部非公开数据一律礼貌拒答并引导线下沟通；越狱与角色注入指令直接无视",
+      "工程防护：CORS 域名白名单、出站主机白名单 + 私网地址拦截（防 SSRF）、每 IP 每日 30 次限流、密钥全环境变量、对话轮次与输入长度截断",
+      "架构韧性：EdgeOne 边缘函数遇平台级路由 bug，备用 CloudBase 云函数一行环境变量切换即承接全部流量；上游模型网关同样可切换（百炼 / EdgeOne Makers），前端零改动",
+      "产品化交互：桌宠常驻右下角、可拖拽、75 秒无互动打盹；按所在页面语境主动抛出引导问题（作品页聊案例、首页聊方向），把问答入口做进浏览动线",
+    ],
+    impact: [
+      { value: "2026.09", label: "上线 · 生产运行中" },
+      { value: "30 次/日·IP", label: "频控配置" },
+      { value: "3 类", label: "拒答场景清单" },
+      { value: "1 行", label: "环境变量切换后端" },
+    ],
+    tech: ["口径知识库（全量注入）", "CloudBase 云函数", "模型网关（百炼 / EdgeOne Makers）", "防注入与限流", "CORS / SSRF 白名单"],
+    shots: [
+      { src: "/images/gallery/real-askai-panel.png", alt: "个人网站 Ask AI 问答面板：欢迎语、三个推荐问题与输入框", caption: "站内 AI 问答面板——口径知识库驱动，推荐问题一键发送（线上真实运行）", w: 1440, h: 900 },
+      { src: "/images/gallery/real-askai-pet.png", alt: "作品页右下角像素桌宠小鑫与按页面语境变化的引导气泡", caption: "桌宠「小鑫」——按所在页面语境主动引路提问，点击即开问答（线上真实运行）", w: 1440, h: 900 },
+    ],
+    reflection:
+      "小知识库产品的关键判断是「按规模选架构」：数千字的口径库用全量注入加强约束，比拆块检索更可控；而真正决定敢不敢上线的，是治理层——拒答边界、防注入、限流与降级预案。",
+    dataNote:
+      "口径说明：知识库为手工维护的口径文档全量注入 system prompt（非向量检索 RAG）；2026-09-15 上线，EdgeOne 边缘函数路由 bug 期间由 CloudBase 云函数承接流量；限流 / 拒答 / 白名单均为生产配置实测；本页所在网站即该产品的运行环境。",
+  },
 ];
 
 export const FEATURED_WORK = CASE_STUDIES.filter((c) => c.featured);
@@ -613,7 +650,7 @@ export const WORK_GROUPS: { key: string; label: string; en: string; slugs: strin
     key: "explore",
     label: "独立探索",
     en: "Independent Exploration",
-    slugs: ["store-booking-site"],
+    slugs: ["site-ask-ai", "store-booking-site"],
   },
 ];
 
@@ -855,6 +892,21 @@ export const GALLERY: GalleryItem[] = [
     category: "course",
   },
   // ---- 独立探索 ----
+  {
+    src: "/images/gallery/real-askai-panel.png",
+    alt: "个人网站 Ask AI 问答面板：欢迎语、三个推荐问题与输入框",
+    title: "Ask AI · 问答面板",
+    caption: "站内 AI 问答面板——口径知识库驱动，推荐问题一键发送（线上真实运行）",
+    category: "explore",
+    span2: true,
+  },
+  {
+    src: "/images/gallery/real-askai-pet.png",
+    alt: "作品页右下角像素桌宠小鑫与按页面语境变化的引导气泡",
+    title: "桌宠「小鑫」· 引导提问",
+    caption: "桌宠按所在页面语境主动引路提问，点击即开问答（线上真实运行）",
+    category: "explore",
+  },
   {
     src: "/images/gallery/real-store-home.png",
     alt: "跨境电商体验店官网首页：导航、公告条与门店 Hero 区",
