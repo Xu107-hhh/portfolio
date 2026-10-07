@@ -608,6 +608,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     tech: ["口径知识库（全量注入）", "CloudBase 云函数", "模型网关（百炼 / EdgeOne Makers）", "防注入与限流", "CORS / SSRF 白名单"],
     shots: [
       { src: "/images/gallery/real-askai-panel.png", alt: "个人网站 Ask AI 问答面板：欢迎语、三个推荐问题与输入框", caption: "站内 AI 问答面板——口径知识库驱动，推荐问题一键发送（线上真实运行）", w: 1440, h: 900 },
+      { src: "/images/gallery/real-askai-reply.png", alt: "问答实录：提问知识库相关项目，AI 按知识库口径列出澄颜智答、Ask AI 数字分身等项目", caption: "真实问答实录——提问「做过哪些知识库项目」，AI 按口径知识库准确作答（线上真实运行）", w: 1440, h: 900 },
       { src: "/images/gallery/real-askai-pet.png", alt: "作品页右下角像素桌宠小鑫与按页面语境变化的引导气泡", caption: "桌宠「小鑫」——按所在页面语境主动引路提问，点击即开问答（线上真实运行）", w: 1440, h: 900 },
     ],
     reflection:
@@ -905,6 +906,13 @@ export const GALLERY: GalleryItem[] = [
     alt: "作品页右下角像素桌宠小鑫与按页面语境变化的引导气泡",
     title: "桌宠「小鑫」· 引导提问",
     caption: "桌宠按所在页面语境主动引路提问，点击即开问答（线上真实运行）",
+    category: "explore",
+  },
+  {
+    src: "/images/gallery/real-askai-reply.png",
+    alt: "问答实录：提问知识库相关项目，AI 按知识库口径准确作答",
+    title: "Ask AI · 问答实录",
+    caption: "真实问答——「做过哪些知识库项目」，AI 按口径知识库列出对应案例（线上真实运行）",
     category: "explore",
   },
   {
