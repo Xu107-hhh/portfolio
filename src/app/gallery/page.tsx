@@ -15,7 +15,7 @@ export default function GalleryPage() {
         index="03"
         eyebrow="Project Archive"
         title="项目实录"
-        description="26 张真实界面与文档截图——全部来自本人交付的系统、报告与项目作品，无任何示意图或素材图。点击进入大图预览，支持键盘 ← → 切换。"
+        description="31 张真实界面与文档截图——全部来自本人交付的系统、报告与项目作品，无任何示意图或素材图。点击进入大图预览，支持键盘 ← → 切换。"
       />
       <section className="mx-auto max-w-6xl px-5 py-14 md:px-8 md:py-20">
         <GalleryGrid />
