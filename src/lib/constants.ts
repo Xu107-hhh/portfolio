@@ -62,7 +62,7 @@ export const EDUCATION = [
     schoolEn: "Tianjin Normal University",
     degree: "硕士（应届生）",
     major: "情报学（信息资源管理 · 数据科学系 · 人工智能应用研究方向）",
-    period: "2024.09 - 2027.06",
+    period: "2024.09 - 2027.07",
     gpa: "3.8/4（1/12）",
     courses:
       "大数据分析与数据挖掘、机器学习、信息分析工具、信息行为分析、竞争情报、信息系统开发方法",
@@ -74,7 +74,7 @@ export const EDUCATION = [
     schoolEn: "Zhengzhou University of Aeronautics",
     degree: "本科",
     major: "图书馆学（主修）/ 法学（辅修）",
-    period: "2020.09 - 2024.06",
+    period: "2020.09 - 2024.07",
     gpa: "3.82/4（1/30）",
     courses:
       "信息组织学、信息检索、信息资源建设、Python 程序设计、数据库原理、知识产权法、商法、宪法学",
@@ -161,7 +161,7 @@ export const EXPERIENCE = [
   {
     company: "字节跳动 Coze · 校园大使",
     role: "AI 产品校园推广",
-    period: "2025.09 - 2027.06",
+    period: "2025.09 - 2027.07",
     details: [
       "负责 AI 产品 Coze 的校园推广与社群运营，策划 AI 实战工作坊，实现拉新率超 36%，累计服务用户 200+",
       "多次线下参与 AI 相关活动，组织和协助多场 AI 应用教学培训",
