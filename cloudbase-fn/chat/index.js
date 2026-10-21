@@ -186,6 +186,8 @@ exports.main = async function (event) {
       stream: false,
       max_tokens: MAX_OUTPUT_TOKENS,
       temperature: 0.6,
+      // qwen3.x 思考链约占一半响应时间，知识库问答场景关掉换速度；恢复删此行即可
+      enable_thinking: false,
       messages: [
         { role: "system", content: SYSTEM_PROMPT.replace("@@KNOWLEDGE@@", KNOWLEDGE) },
         ...messages,
