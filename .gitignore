@@ -28,6 +28,7 @@ yarn-error.log*
 next-env.d.ts
 .gh-preview/
 .mimosa/
+cloudbaserc*.json
 
 # Local Netlify folder
 .netlify
