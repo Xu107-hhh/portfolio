@@ -621,6 +621,43 @@ export const CASE_STUDIES: CaseStudy[] = [
     dataNote:
       "口径说明：知识库为手工维护的口径文档全量注入 system prompt（非向量检索 RAG）；2026-09-15 上线，EdgeOne 边缘函数路由 bug 期间由 CloudBase 云函数承接流量；限流 / 拒答 / 白名单均为生产配置实测；本页所在网站即该产品的运行环境。",
   },
+  {
+    slug: "interview-intel-workbench",
+    title: "求职面试情报工作台",
+    category: "Personal Intelligence System",
+    tagline: "把面试备战做成一套加密情报系统 · 内容即代码 · 面试即数据源",
+    role: "独立完成 · 情报体系 / 内容工程 / 加密发布",
+    period: "2026.10 - 运行中",
+    company: "个人项目（私有部署）",
+    featured: false,
+    cover: "/images/gallery/real-workbench-gate.png",
+    summary:
+      "秋招多线并行时，把全部面试备战做成一套可运维的情报系统：通用方法论宝典 + 每家目标公司一个档案模块，结构化卡片是唯一内容源，一条命令构建出本地明文页、MD 镜像与加密 hub 三种产物；线上版全量 AES-GCM 加密、浏览器端解密，仓库与页面门外零明文；每场面试的录音转写复盘再回流成卡片更新——一次面试就是一次系统迭代。",
+    problem:
+      "面试备战内容有两个硬约束：一是高度敏感——逐字稿、数字口径表、面后复盘不能以任何明文形式上云；二是高频迭代且多公司并行——每家公司的 JD 解读、预测题、口径表既要独立维护又互相引用。记在散文档里改不动、放在笔记里不安全、背在脑子里不可验证，需要一套「改一处、处处生效」且带安全边界的系统。",
+    approach: [
+      "内容即代码：卡片以结构化数据模块维护（id / 标签 / 30 秒版 / 正文 / 追问 / 红线），一处编辑、三种产物一键构建——本地明文页（断网可用）、MD 手机镜像、加密 hub（唯一上线产物）",
+      "按复习动线组织信息：章节目录 + 全文搜索 + 自测模式 + 勾选背熟进度 +「只看必背」一键从 43 张收敛到 23 张；每张卡三层信息密度（30 秒版 → 正文 → 追问 / 红线），先结论后展开",
+      "加密发布链路：内容 AES-GCM 256 全量加密、PBKDF2 21 万次迭代派生密钥、浏览器端解密；构建时做加密回读校验（密文解不回原文即构建失败），验收脚本再查三件事——结构语法、卡片 id 唯一、门外零明文泄露",
+      "数字口径单一真源：每个模块一张「口径速查卡」作为该模块所有数字的唯一来源，卡片正文只引用不另写，从机制上杜绝现场口径漂移",
+      "面后数据回流 SOP：每场面试录音走 whisper 转写，按三指标复盘（填充词次/分、首句结论率、数字个数），错题与口径修正写回对应档案与通用宝典，构建推送完成迭代；新公司接入固定五步（复制模板 → 改数据 → 注册 → 构建 → 推送）",
+    ],
+    impact: [
+      { value: "127 张", label: "备战卡片 · 通用宝典 43 + 公司档案 84" },
+      { value: "AES-256", label: "PBKDF2 21 万次 · 门外零明文" },
+      { value: "3 端", label: "一键构建 · 明文页 / MD 镜像 / 加密 hub" },
+      { value: "24h", label: "面后复盘回流 · 每场面试迭代一次" },
+    ],
+    tech: ["内容即代码（结构化数据模块）", "Node.js 构建 / 验收脚本", "Web Crypto（AES-GCM × PBKDF2）", "whisper 转写复盘管线", "GitHub Pages（私有仓库通道）"],
+    shots: [
+      { src: "/images/gallery/real-workbench-gate.png", alt: "加密 hub 的口令门页面：深色背景中央白色卡片，含锁图标、口令输入框与解锁按钮", caption: "加密 hub 门页——内容全量加密存储、浏览器端解密，仓库与页面门外零明文（真实构建产物）", w: 1440, h: 900 },
+      { src: "/images/gallery/real-workbench-playbook.png", alt: "通用宝典主界面：左侧章节目录、顶部搜索与自测/只看必背工具条、背熟进度与卡片列表", caption: "通用宝典引擎——搜索 / 自测 / 勾选背熟 / 只看必背 / 编辑导出，43 张卡三层信息密度（本地明文页实拍，公司档案已匿名）", w: 1440, h: 900 },
+    ],
+    reflection:
+      "情报学方法最彻底的一次自我应用：信息组织（卡片与口径单一真源）、信息安全（端到端加密加泄露验收）、工作流自动化（一键构建发布）在同一套系统里闭环——敏感知识不是不能上云，是必须带着验收纪律上云。",
+    dataNote:
+      "口径说明：因含未公开的面试策略与个人数字口径，本系统仅私有加密部署、不提供公开链接，公司档案的名称与内容已匿名处理（两张截图均取自真实构建产物与本地明文页，其中一处公司名在截图副本中替换为通用表述，源文件未改动）；127 张 = 通用宝典 43 + 两份公司档案 84，为构建脚本统计口径；加密参数与「门外零明文」为验收脚本实测结论。",
+  },
 ];
 
 export const FEATURED_WORK = CASE_STUDIES.filter((c) => c.featured);
@@ -656,7 +693,7 @@ export const WORK_GROUPS: { key: string; label: string; en: string; slugs: strin
     key: "explore",
     label: "独立探索",
     en: "Independent Exploration",
-    slugs: ["site-ask-ai", "store-booking-site"],
+    slugs: ["site-ask-ai", "store-booking-site", "interview-intel-workbench"],
   },
 ];
 
@@ -954,6 +991,21 @@ export const GALLERY: GalleryItem[] = [
     alt: "店员后台预约台账：统计卡片、搜索与预约记录表格",
     title: "店员后台 · 预约台账",
     caption: "预约台账后台——统计 / 搜索 / CSV 导出，写入前自动轮换备份最近 10 版（记录为模拟数据）",
+    category: "explore",
+  },
+  {
+    src: "/images/gallery/real-workbench-gate.png",
+    alt: "求职面试情报工作台加密 hub 的口令门页面：深色背景中央白色卡片，含锁图标与口令输入框",
+    title: "情报工作台 · 加密门页",
+    caption: "面试备战情报系统——内容 AES-GCM 全量加密、浏览器端解密，仓库与页面门外零明文（真实构建产物，公司档案已匿名）",
+    category: "explore",
+    span2: true,
+  },
+  {
+    src: "/images/gallery/real-workbench-playbook.png",
+    alt: "通用宝典主界面：左侧章节目录、搜索与自测/只看必背工具条、背熟进度与卡片列表",
+    title: "情报工作台 · 通用宝典引擎",
+    caption: "搜索 / 自测 / 勾选背熟 / 只看必背 / 编辑导出——43 张卡三层信息密度，内容即代码一键构建（本地明文页实拍）",
     category: "explore",
   },
 ];
